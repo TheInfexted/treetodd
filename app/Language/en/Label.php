@@ -10,4 +10,9 @@ return [
     'programms' => 'Programms',
     'powerby' => 'Power By',
     'classroomlist' => 'Classroom List',
+    'teacherlist' => 'Teachers List',
+    'personal_info' => 'Personal Information',
+    'professional_info' => 'Professional Information',
+    'assignment_info' => 'Assignment Information',
+    'login_info' => 'Login Information',
 ];

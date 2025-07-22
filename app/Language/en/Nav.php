@@ -4,7 +4,7 @@
 return [
     'dashboard' => 'Dashboard',
     'children' => 'Children',
-    'teacher' => 'Teacher',
+    'teacher' => 'Teachers',
     'submit' => 'Submit',
     'support' => 'Support',
     'gethelp' => 'Get Helps',
@@ -12,4 +12,9 @@ return [
     'classroom' => 'Classroom',
     'filter' => 'Filter',
     'search' => 'Search',
+    'add_teacher' => 'Add Teacher',
+    'edit_teacher' => 'Edit Teacher',
+    'view_teacher' => 'View Teacher',
+    'teacher_details' => 'Teacher Details',
+    'teacher_list' => 'Teachers List',
 ];

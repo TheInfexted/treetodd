@@ -10936,7 +10936,7 @@ header .offcanvas .offcanvas-title {
 }
 header.header-main {
   position: fixed;
-  height: 80px;
+  height: 60px;
   top: 0;
   z-index: 1001;
   padding-left: calc(17rem + 20px);
@@ -12746,7 +12746,7 @@ div .semi-nav ~ footer {
 }
 
 .btn-group-sm > .btn, .btn-sm {
-  padding: 4px 20px;
+  padding: 4px 10px;
   font-size: 14px;
 }
 
