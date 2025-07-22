@@ -1,0 +1,64 @@
+@charset "UTF-8";
+
+/**
+Copyright 2025
+**/
+
+a:focus:active, button:focus:active {
+    /* color: #FFF !important; */
+    /* background-color: #0047BA; */
+    transform: scale(.95,.95);
+    -webkit-transform: scale(.95,.95);
+    -moz-transform: scale(.95,.95);
+    -ms-transform: scale(.95,.95);
+    -o-transform: scale(.95,.95);
+}
+
+select:active,
+select:focus {
+	outline: none;
+}
+
+::selection {
+	color: #FFF;
+	background-color: #0047BA;
+}
+
+::-moz-selection {
+	color: #FFF;
+	background-color: #0047BA;
+}
+
+::-webkit-selection {
+	color: #FFF;
+	background-color: #0047BA;
+}
+
+::-webkit-scrollbar {
+    display: block;
+	/* width: .3rem; */
+    width: 0;
+    height: .3rem;
+	background: transparent !important;
+}
+
+::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(248, 248, 248, 1);
+	border-radius: .6rem;
+    -webkit-border-radius: .6rem;
+	-moz-border-radius: .6rem;
+	-ms-border-radius: .6rem;
+	-o-border-radius: .6rem;
+	display: none;
+	/* box-shadow: inset 0 0 1px rgba(0,0,0,.5) !important; */
+	/* background-color: rgba(0,0,0,.5); */
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: .6rem;
+	background: #ccc;
+	display: block;
+    /* border-radius: 20px; */
+    /* box-shadow: inset 0 0 6px unset; */
+    /* background: rgba(0,0,0,.3); */
+}

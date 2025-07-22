@@ -1,0 +1,356 @@
+@charset "UTF-8";
+
+/**
+Copyright 2025
+**/
+
+/*
+* Common
+*/
+
+.main-title {
+	font-weight: 600;
+	text-transform: capitalize;
+}
+
+/*
+* End Common
+*/
+
+/*
+* Login
+*/
+
+/* .login-form-container { */
+main[current-page="login"] {
+	background-image: url('../../img/bg_login.png');
+	background-size: cover;
+	background-repeat: no-repeat;
+	width: 100%;
+	height: 100%;
+	min-height: 100vh;
+}
+
+main[current-page="login"] .logo {
+	width: 75%;
+}
+
+.login-form-container .app-form {
+	padding: 30px 30px;
+}
+
+.login-form-container .form_container {
+	width: 100%;
+	background-color: var(--white);
+	box-shadow: var(--box-shadow);
+	border-radius: var(--bs-border-radius);
+}
+
+.login-form-container .form_container h3 {
+	font-size: calc(20px + 8 * (100vw - 300px) / 1620);
+	color: rgb(79,201,218, 0.75);
+	font-weight: 600;
+}
+
+.login-form-container .form_container p {
+	color: rgb(var(--dark), 1);
+	font-weight: 500;
+	font-size: calc(12px + 4 * (100vw - 300px) / 1620);
+}
+
+/*
+* End Login
+*/
+
+/*
+* Form
+*/
+
+.form-check-input:checked {
+	background-color: rgba(79,201,218, 1) !important;
+	border-color: rgba(79,201,218, 1) !important;
+}
+
+.form-check-input:focus {
+	box-shadow: 0 0 0 0.25rem rgba(79,201,218, 0.2) !important;
+}
+
+/*
+* End Form
+*/
+
+/*
+* Datatable
+*/
+
+.app-datatable-default .dataTables_wrapper table {
+	border-top: 1px dotted rgba(var(--dark), 0.2);
+	border-bottom: 1px dotted rgba(var(--dark), 0.2);
+}
+
+.app-datatable-default .dataTables_wrapper table.dataTable.display > tbody > tr.even > .sorting_1, .app-datatable-default .dataTables_wrapper table.dataTable.display > tbody > tr.odd > * {
+	box-shadow: none;
+}
+.app-datatable-default .dataTables_wrapper table.dataTable.display > tbody > tr:hover > * {
+	box-shadow: none;
+}
+
+.app-datatable-default .dataTables_wrapper table.dataTable.display > tbody > tr.odd {
+	background-color: rgba(var(--light), 0.2);
+}
+
+.app-datatable-default .dataTables_wrapper table.order-column.stripe > tbody > tr.even > .sorting_1 {
+	box-shadow: none;
+}
+
+.app-datatable-default .dataTables_wrapper table thead th {
+	border-bottom: 1px dashed rgba(var(--secondary), 0.4);
+	color: rgba(var(--dark), 1);
+	font-weight: 600;
+	padding: 0.5rem 0.75rem;
+}
+
+.app-datatable-default .dataTables_wrapper table thead th.sorting:before, .app-datatable-default .dataTables_wrapper table thead th.sorting:after {
+	display: none;
+	font-family: "Phosphor-Bold" !important;
+	font-weight: 700;
+	opacity: 1;
+	font-size: 12px;
+	color: rgba(var(--dark), 1);
+	right: 26px;
+}
+
+.app-datatable-default .dataTables_wrapper table thead th.sorting.sorting_asc_disabled, .app-datatable-default .dataTables_wrapper table thead th.sorting.sorting_desc_disabled, .app-datatable-default .dataTables_wrapper table thead th.sorting.sorting_asc, .app-datatable-default .dataTables_wrapper table thead th.sorting.sorting_desc {
+	padding-right: 0.6rem !important;
+}
+
+.app-datatable-default .dataTables_wrapper table thead th:first-child {
+	padding-left: 20px;
+}
+
+.app-datatable-default .dataTables_wrapper table thead th:last-child {
+	padding-right: 20px;
+}
+
+.app-datatable-default .dataTables_wrapper table tbody td {
+	border: none;
+	border-top: 1px dashed rgba(var(--secondary), 0.4);
+	color: rgba(var(--dark), 0.8);
+	font-size: 15px;
+	padding: 0.8rem 0.75rem;
+}
+
+.app-datatable-default .dataTables_wrapper table tbody td h6 {
+	color: rgba(var(--dark), 0.8);
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.app-datatable-default .dataTables_wrapper table tbody td:last-child {
+	padding-right: 20px;
+}
+
+.app-datatable-default .dataTables_wrapper table tbody td:first-child {
+	padding-left: 20px;
+}
+
+.app-datatable-default .dataTables_wrapper table tbody tr .odd.selected {
+	background-color: var(--white) !important;
+}
+
+.app-datatable-default .dataTables_wrapper table tbody tr:hover {
+	background-color: rgba(var(--light), 0.1);
+}
+
+.app-datatable-default .dataTables_wrapper table tbody tr:hover h6 {
+	color: rgba(79,201,218, 1);
+}
+.app-datatable-default .dataTables_wrapper table tfoot th {
+	border-top: 1px dashed rgba(var(--secondary), 0.4);
+	color: rgba(var(--dark), 1);
+	font-weight: 600;
+	padding: 0.5rem 0.75rem;
+}
+
+.app-datatable-default .dataTables_wrapper table tfoot th:first-child {
+	padding-left: 20px;
+}
+.app-datatable-default .dataTables_wrapper table tfoot th:last-child {
+	padding-right: 20px;
+}
+
+.app-datatable-default .dataTables_wrapper .check-box {
+	margin-bottom: 0;
+}
+
+.app-datatable-default .dataTables_wrapper .check-box .checkmark {
+	border-radius: 5px;
+	border: 2px solid rgba(var(--dark), 0.4);
+}
+
+.app-datatable-default .dataTables_wrapper .check-box .checkmark:before {
+	font-size: 16px;
+	top: 8px;
+	left: 11px;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_length {
+	padding: 1rem 1.25rem;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_length label {
+	color: rgba(var(--dark), 0.8);
+	font-weight: 500;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_length select {
+	color: rgba(var(--secondary), 1);
+	font-size: 14px;
+	padding: 0.4rem 0.75rem;
+	border: 1px dotted rgba(var(--secondary), 0.4) !important;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_length select:focus-visible {
+	outline: 0;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_filter {
+	padding: 1rem 1.25rem;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_filter label {
+	color: rgba(var(--dark), 0.8);
+	font-weight: 500;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_filter input {
+	padding: 0.4rem 0.75rem;
+	border: 1px dotted rgba(var(--secondary), 0.4) !important;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_filter input:focus-visible {
+	outline: 0;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_paginate {
+	padding: 0.5rem 1.25rem;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_paginate .paginate_button {
+	border: 1px dashed rgba(var(--dark), 0.2);
+	margin: 0.2rem;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_paginate .paginate_button.current, .app-datatable-default .dataTables_wrapper .dataTables_paginate .paginate_button:active {
+	background-color: rgba(79,201,218, 1) !important;
+	background: rgba(79,201,218, 1);
+	color: var(--white) !important;
+	border: 1px dashed rgba(var(--dark), 0.2);
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover, .app-datatable-default .dataTables_wrapper .dataTables_paginate .paginate_button:active:hover {
+	background-color: rgba(79,201,218, 0.8) !important;
+	color: var(--white) !important;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+	background-color: rgba(79,201,218, 0.1) !important;
+	background: rgba(79,201,218, 0.1);
+	color: rgba(79,201,218, 1) !important;
+	border: 1px dashed rgba(var(--dark), 0.2);
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_paginate .paginate_button.previous {
+	background-color: rgba(var(--secondary), 0.1) !important;
+	background: rgba(var(--secondary), 0.1);
+	color: rgba(var(--secondary), 1) !important;
+	border: 1px dashed rgba(var(--dark), 0.2);
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_paginate .paginate_button.previous:hover {
+	background-color: rgba(var(--secondary), 0.1) !important;
+	background: rgba(var(--secondary), 0.1);
+	color: rgba(var(--secondary), 1) !important;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_paginate .paginate_button.next {
+	background-color: rgba(79,201,218, 0.1) !important;
+	background: rgba(79,201,218, 0.1);
+	color: rgba(79,201,218, 1) !important;
+}
+
+.app-datatable-default .dataTables_wrapper .dataTables_info {
+	padding: 1.25rem;
+	color: rgba(var(--dark), 0.8);
+	font-weight: 500;
+	font-size: 15px;
+}
+
+.default-data-table thead tr th:nth-child(1) {
+	min-width: 150px;
+}
+
+.default-data-table thead tr th:nth-child(3) {
+	min-width: 100px;
+}
+
+.default-data-table thead tr th:nth-child(5) {
+	min-width: 100px;
+}
+
+.default-data-table thead tr th:nth-child(7) {
+	min-width: 100px;
+}
+
+.row-border-table thead tr th:nth-child(1) {
+	min-width: 150px;
+}
+
+.row-border-table thead tr th:nth-child(2) {
+	min-width: 200px;
+}
+
+.row-border-table thead tr th:nth-child(3) {
+	min-width: 100px;
+}
+
+.row-border-table thead tr th:nth-child(5) {
+	min-width: 100px;
+}
+
+.row-callback-datatable thead tr th:nth-child(1) {
+	min-width: 150px;
+}
+
+.row-callback-datatable thead tr th:nth-child(2) {
+	min-width: 200px;
+}
+
+.row-callback-datatable thead tr th:nth-child(3) {
+	min-width: 100px;
+}
+
+.row-callback-datatable thead tr th:nth-child(5) {
+	min-width: 100px;
+}
+
+.child-row-datatable thead tr th:nth-child(2) {
+	min-width: 150px;
+}
+
+.child-row-datatable thead tr th:nth-child(3) {
+	min-width: 200px;
+}
+
+.child-row-datatable thead tr th:nth-child(4) {
+	min-width: 100px;
+}
+
+.child-row-datatable td.highlight {
+	font-weight: bold;
+	color: rgba(79,201,218);
+}
+
+/*
+* End Datatable
+*/
