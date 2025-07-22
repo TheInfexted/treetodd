@@ -4,9 +4,6 @@
         <!--- Page Title --->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="main-title"><?= $pageName; ?></h4>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-addTeacher">
-                <i class="ph-bold ph-plus me-1"></i>Add New Teacher
-            </button>
         </div>
         <!--- End Page Title --->
 
@@ -65,6 +62,9 @@
                             </div>
                             
                             <div class="text-end">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-addTeacher">
+                                    <i class="ph-bold ph-plus me-1"></i>Teacher
+                                </button>
                                 <button class="btn btn-primary align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 3 24 24" fill="#FFF" class="me-1" width="15" height="20">
                                         <path d="m18,5.92c0-2.162-1.758-3.92-3.92-3.92H3.92C1.758,2,0,3.758,0,5.92c0,.935.335,1.841.944,2.551l5.056,5.899v3.63c0,.315.148.611.4.8l4,3c.177.132.388.2.6.2.152,0,.306-.035.447-.105.339-.169.553-.516.553-.895v-6.63l5.056-5.899c.609-.71.944-1.616.944-2.551Zm-2.462,1.25l-5.297,6.18c-.155.181-.241.412-.241.651v5l-2-1.5v-3.5c0-.239-.085-.47-.241-.651L2.462,7.169c-.298-.348-.462-.792-.462-1.25,0-1.059.861-1.92,1.92-1.92h10.16c1.059,0,1.92.861,1.92,1.92,0,.458-.164.902-.462,1.25Zm8.462,12.831c0,.552-.448,1-1,1h-8c-.552,0-1-.448-1-1s.448-1,1-1h8c.552,0,1,.448,1,1Zm0-4c0,.552-.448,1-1,1h-8c-.552,0-1-.448-1-1s.448-1,1-1h8c.552,0,1,.448,1,1Zm-6-5h5c.552,0,1,.448,1,1s-.448,1-1,1h-5c-.552,0-1-.448-1-1s.448-1,1-1Z"/>
