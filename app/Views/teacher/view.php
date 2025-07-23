@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         icon: 'success'
                     }).then(() => {
                         $('#modal-editTeacher').modal('hide');
-                        location.reload(); // Reload to show updated data
+                        location.reload(); 
                     });
                 } else {
                     Swal.fire({
