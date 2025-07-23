@@ -8,34 +8,25 @@ use CodeIgniter\I18n\Time;
 
 class TeacherController extends ResourceController
 {
+    /*
+    * Protected
+    */
+
     protected $teacherModel;
     protected $session;
+
+    /*
+    * End Protected
+    */
+
+    /*
+    * Public
+    */
 
     public function __construct()
     {
         $this->teacherModel = new TeacherModel();
         $this->session = session();
-    }
-
-    /**
-     * Display teacher index page
-     */
-    public function index()
-    {
-        if (!$this->session->get('isLoggedIn')) {
-            return redirect()->to('/');
-        }
-
-        $data['session'] = $this->session->get('isLoggedIn') ? true : false;
-        $data['pageName'] = lang('Nav.teacher');
-        $data['branches'] = $this->teacherModel->getBranches();
-        $data['kindergardens'] = $this->teacherModel->getKindergarden();
-
-        echo view('template/start');
-        echo view('template/header');
-        echo view('teacher/index', $data);
-        echo view('template/footer');
-        echo view('template/end', $data);
     }
 
     /**
@@ -333,7 +324,6 @@ class TeacherController extends ResourceController
                 ]);
             }
 
-            // FIXED: Include status and modified_date
             $teacherData = [
                 'teacher_name' => $this->request->getPost('teacher_name'),
                 'age' => $this->request->getPost('age'),
@@ -398,7 +388,7 @@ class TeacherController extends ResourceController
     /**
      * Change teacher status
      */
-    public function changeStatus()
+    public function updateTeacherStatus()
     {
         if (!$this->session->get('isLoggedIn')) {
             return $this->response->setJSON([
@@ -449,51 +439,6 @@ class TeacherController extends ResourceController
             return $this->response->setJSON([
                 'code' => 1,
                 'message' => "Teacher status changed to {$statusText} successfully"
-            ]);
-
-        } catch (\Exception $e) {
-            return $this->response->setJSON([
-                'code' => 0,
-                'message' => 'Error: ' . $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
-     * Delete teacher 
-     */
-    public function deleteTeacher()
-    {
-        if (!$this->session->get('isLoggedIn')) {
-            return $this->response->setJSON([
-                'code' => 69,
-                'message' => 'Session expired'
-            ]);
-        }
-
-        try {
-            $teacherId = $this->request->getPost('teacher_id');
-            
-            if (empty($teacherId)) {
-                return $this->response->setJSON([
-                    'code' => 0,
-                    'message' => 'Teacher ID is required'
-                ]);
-            }
-
-            $teacher = $this->teacherModel->find($teacherId);
-            if (!$teacher) {
-                return $this->response->setJSON([
-                    'code' => 0,
-                    'message' => 'Teacher not found'
-                ]);
-            }
-
-            $this->teacherModel->delete($teacherId);
-
-            return $this->response->setJSON([
-                'code' => 1,
-                'message' => 'Teacher deleted successfully'
             ]);
 
         } catch (\Exception $e) {
@@ -558,4 +503,8 @@ class TeacherController extends ResourceController
             ]);
         }
     }
+
+    /*
+    * End Public
+    */
 }

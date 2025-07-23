@@ -314,15 +314,12 @@
                     <!-- Login Account -->
                     <div class="col-12">
                         <hr class="my-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="update_login" value="1" id="updateLoginCheck">
-                            <label class="form-check-label fw-bold text-primary" for="updateLoginCheck">
-                                <?= lang('Label.update_login_account'); ?>
-                            </label>
-                        </div>
+                        <h5 class="fw-bold text-primary">
+                            <?= lang('Label.update_login_account'); ?>
+                        </h5>
                     </div>
                     
-                    <div id="editLoginFields" style="display: none;">
+                    <div id="editLoginFields">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?= lang('Input.username'); ?></label>

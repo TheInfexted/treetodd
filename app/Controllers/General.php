@@ -10,16 +10,24 @@ class General extends BaseController
 
     public function index_teacher()
     {
-        if( !session()->get('isLoggedIn') ): return false; endif;
-        $data['session'] = session()->get('isLoggedIn') ? true : false;
+        if (!session()->get('isLoggedIn')) return false;
 
-        $data['pageName'] = lang('Nav.teacher');
+        $teacherModel = new \App\Models\TeacherModel();
+        $branches = $teacherModel->getBranches();
+        $kindergardens = $teacherModel->getKindergarden();
+
+        $data = [
+            'session' => true,
+            'pageName' => lang('Nav.teacher'),
+            'branches' => $branches,
+            'kindergardens' => $kindergardens,
+        ];
 
         echo view('template/start');
         echo view('template/header');
-        echo view('teacher/index',$data);
+        echo view('teacher/index', $data);
         echo view('template/footer');
-        echo view('template/end',$data);
+        echo view('template/end', $data);
     }
 
     /*

@@ -14,7 +14,7 @@ $routes->get('/blank', 'General::index_blank', ['filter' => 'noauth']);
 $routes->get('/', 'General::index', ['filter' => 'noauth']);
 $routes->get('dashboard', 'General::index_dashboard', ['filter' => 'auth']);
 $routes->get('settings/classroom', 'General::index_classroom', ['filter' => 'auth']);
-$routes->get('teachers', 'TeacherController::index', ['filter' => 'auth']);
+$routes->get('teachers', 'General::index_teacher', ['filter' => 'auth']);
 $routes->get('children', 'General::index_children', ['filter' => 'auth']);
 
 // Auth
@@ -31,7 +31,7 @@ $routes->post('teacher/add-new', 'TeacherController::addNewTeacher', ['filter' =
 $routes->get('teacher/details/(:num)', 'TeacherController::getTeacherDetails/$1', ['filter' => 'auth']);
 $routes->post('teacher/update', 'TeacherController::updateTeacher', ['filter' => 'auth']);
 $routes->post('teacher/delete', 'TeacherController::deleteTeacher', ['filter' => 'auth']);
-$routes->post('teacher/change-status', 'TeacherController::changeStatus', ['filter' => 'auth']);
+$routes->post('teacher/change-status', 'TeacherController::updateTeacherStatus', ['filter' => 'auth']);
 // End Teacher
 
 // Classroom
