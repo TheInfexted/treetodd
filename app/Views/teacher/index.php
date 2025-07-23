@@ -13,7 +13,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5><i class="ph-duotone ph-chalkboard-teacher me-2"></i><?= lang('Nav.teacher_list'); ?></h5>
+                        <h5><i class="ph-duotone ph-chalkboard-teacher me-2"></i><?= lang('Label.teacherlist'); ?></h5>
                     </div>
                     <div class="card-body px-0">
 
@@ -42,11 +42,13 @@
                                         </div>
                                         <div class="col-xl-3 col-lg-3 col-md-6 col-12">
                                             <label class="form-label"><?= lang('Input.branch'); ?></label>
-                                            <select class="form-select" name="branch_id">
+                                            <select class="form-select" name="branchId">
                                                 <option value=""><?= lang('Input.all_branches'); ?></option>
-                                                <?php foreach ($branches as $branch): ?>
-                                                    <option value="<?= $branch['branch_id']; ?>"><?= $branch['branch_name']; ?></option>
-                                                <?php endforeach; ?>
+                                                <?php if (isset($branches) && is_array($branches)): ?>
+                                                    <?php foreach ($branches as $branch): ?>
+                                                        <option value="<?= $branch['branch_id']; ?>"><?= $branch['branch_name']; ?></option>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
                                             </select>
                                         </div>
                                         <div class="col-xl-auto col-lg-auto col-md-auto col-12">
@@ -67,7 +69,7 @@
                                 </button>
                                 <button class="btn btn-primary align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 3 24 24" fill="#FFF" class="me-1" width="15" height="20">
-                                        <path d="m18,5.92c0-2.162-1.758-3.92-3.92-3.92H3.92C1.758,2,0,3.758,0,5.92c0,.935.335,1.841.944,2.551l5.056,5.899v3.63c0,.315.148.611.4.8l4,3c.177.132.388.2.6.2.152,0,.306-.035.447-.105.339-.169.553-.516.553-.895v-6.63l5.056-5.899c.609-.71.944-1.616.944-2.551Zm-2.462,1.25l-5.297,6.18c-.155.181-.241.412-.241.651v5l-2-1.5v-3.5c0-.239-.085-.47-.241-.651L2.462,7.169c-.298-.348-.462-.792-.462-1.25,0-1.059.861-1.92,1.92-1.92h10.16c1.059,0,1.92.861,1.92,1.92,0,.458-.164.902-.462,1.25Zm8.462,12.831c0,.552-.448,1-1,1h-8c-.552,0-1-.448-1-1s.448-1,1-1h8c.552,0,1,.448,1,1Zm0-4c0,.552-.448,1-1,1h-8c-.552,0-1-.448-1-1s.448-1,1-1h8c.552,0,1,.448,1,1Zm-6-5h5c.552,0,1,.448,1,1s-.448,1-1,1h-5c-.552,0-1-.448-1-1s.448-1,1-1Z"/>
+                                        <path d="m18,5.92c0-2.162-1.758-3.92-3.92-3.92H3.92C1.758,2,0,3.758,0,5.92c0,.935.335,1.841.944,2.551l5.056,5.899v3.63c0,.315.148.611.4.8l4,3c.177.132.388.2.6.2.152,0,.306-.035.447-.105.339-.169.553-.516.553-.895v-6.63l5.056-5.899c.609-.71.944-1.616.944-2.551Zm-2.462,1.25l-5.297,6.18c-.155.181-.241.412-.241.651v5l-2-1.5v-3.5c0-.239-.085-.47-.241-.651L2.462,7.169c-.298-.348-.462-.792-.462-1.25,0-1.059.861-1.92,1.92-1.92h10.16c1.059,0,1.92.861,1.92,1.92,0,.458-.164.902-.462,1.25Zm8.462,12.831c0,.552-.448,1-1,1h-8c-.552,0-1-.448-1-1s.448-1,1-1h8c.552,0,1,.448,1,1Zm0-4c0,.552-.448,1-1,1h-8c-.552,0-1-.448-1-1s.448-1,1-1h8c.552,0,1,.448,1=1Zm-6-5h5c.552,0,1,.448,1,1s-.448,1-1,1h-5c-.552,0-1-.448-1-1s.448-1,1-1Z"/>
                                     </svg><?= lang('Nav.filter'); ?>
                                 </button>
                             </div>
@@ -81,7 +83,7 @@
                                     <tr>
                                         <th><?= lang('Input.teacher_name'); ?></th>
                                         <th><?= lang('Input.age'); ?></th>
-                                        <th><?= lang('Input.qualification'); ?></th>
+                                        <th><?= lang('Input.highest_qualification'); ?></th>
                                         <th><?= lang('Input.kap_certificate'); ?></th>
                                         <th><?= lang('Input.hired_date'); ?></th>
                                         <th><?= lang('Input.phone'); ?></th>
@@ -105,16 +107,14 @@
 </main>
 
 <!-- Add Teacher Modal -->
-<div class="modal fade" id="modal-addTeacher" tabindex="-1" aria-labelledby="addTeacherModalLabel" aria-hidden="true">
+<section class="modal fade modal-addTeacher" id="modal-addTeacher" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-addTeacher" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addTeacherModalLabel">
-                    <i class="ph-bold ph-user-plus me-2"></i><?= lang('Nav.add_teacher'); ?>
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header bg-primary-800 d-flex justify-content-between align-items-center">
+                <h1 class="modal-title fs-5 text-white"><?= lang('Nav.add_teacher'); ?></h1>
+                <button type="button" class="border-0 bg-none text-white" data-bs-dismiss="modal" aria-label="Close"><i class="ti ti-x fs-3"></i></button>
             </div>
-            <form id="addTeacherForm">
+            <form id="form-validation" class="form-validation app-form addTeacherForm" novalidate="novalidate">
             <div class="modal-body">
                 <div class="row g-3">
                     <!-- Personal Information -->
@@ -124,27 +124,32 @@
                     
                     <div class="col-md-6">
                         <label class="form-label"><?= lang('Input.teacher_name'); ?> <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="teacher_name" required>
+                        <input type="text" class="form-control" name="teacherName" required>
+                        <span class="invalid-feedback text-danger">Invalid Teacher Name.</span>
                     </div>
                     
                     <div class="col-md-6">
                         <label class="form-label"><?= lang('Input.age'); ?> <span class="text-danger">*</span></label>
                         <input type="number" class="form-control" name="age" min="18" max="99" required>
+                        <span class="invalid-feedback text-danger">Invalid Age.</span>
                     </div>
                     
                     <div class="col-md-6">
                         <label class="form-label"><?= lang('Input.id_number'); ?> <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="id_number" required>
+                        <input type="text" class="form-control" name="idNumber" required>
+                        <span class="invalid-feedback text-danger">Invalid ID Number.</span>
                     </div>
                     
                     <div class="col-md-6">
                         <label class="form-label"><?= lang('Input.phone_number'); ?> <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="phone_number" required>
+                        <input type="text" class="form-control" name="phoneNumber" required>
+                        <span class="invalid-feedback text-danger">Invalid Phone Number.</span>
                     </div>
                     
                     <div class="col-12">
                         <label class="form-label"><?= lang('Input.address'); ?> <span class="text-danger">*</span></label>
                         <textarea class="form-control" name="address" rows="3" required></textarea>
+                        <span class="invalid-feedback text-danger">Invalid Address.</span>
                     </div>
 
                     <!-- Professional Information -->
@@ -155,7 +160,7 @@
                     
                     <div class="col-md-6">
                         <label class="form-label"><?= lang('Input.highest_qualification'); ?> <span class="text-danger">*</span></label>
-                        <select class="form-select" name="highest_qualification" required>
+                        <select class="form-select" name="qualification" required>
                             <option value="" selected="selected" disabled="disabled"><?= lang('Input.select_one'); ?></option>
                             <option value="No formal education"><?= lang('Input.no_formal_education'); ?></option>
                             <option value="Primary education"><?= lang('Input.primary_education'); ?></option>
@@ -166,11 +171,12 @@
                             <option value="Master's degree"><?= lang('Input.masters_degree'); ?></option>
                             <option value="Doctorate or higher"><?= lang('Input.doctorate_or_higher'); ?></option>
                         </select>
+                        <span class="invalid-feedback text-danger">Invalid Qualification.</span>
                     </div>
                     
                     <div class="col-md-6">
                         <label class="form-label"><?= lang('Input.kap_certificate'); ?></label>
-                        <select class="form-select" name="kap_certificate">
+                        <select class="form-select" name="kapCertificate">
                             <option value="2"><?= lang('Input.no'); ?></option>
                             <option value="1"><?= lang('Input.yes'); ?></option>
                         </select>
@@ -178,7 +184,8 @@
                     
                     <div class="col-md-6">
                         <label class="form-label"><?= lang('Input.hired_date'); ?> <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" name="hired_date" required>
+                        <input type="date" class="form-control" name="hiredDate" required>
+                        <span class="invalid-feedback text-danger">Invalid Hired Date.</span>
                     </div>
 
                     <!-- Assignment Information -->
@@ -189,27 +196,34 @@
                     
                     <div class="col-md-4">
                         <label class="form-label"><?= lang('Input.kindergarden'); ?> <span class="text-danger">*</span></label>
-                        <select class="form-select" name="kdgn_id" required>
+                        <select class="form-select" name="kdgnId" required>
                             <option value=""><?= lang('Input.select_kindergarden'); ?></option>
-                            <?php foreach ($kindergardens as $kg): ?>
-                                <option value="<?= $kg['kdgn_id']; ?>"><?= $kg['kindergarden_name']; ?></option>
-                            <?php endforeach; ?>
+                            <?php if (isset($kindergartens) && is_array($kindergartens)): ?>
+                                <?php foreach ($kindergartens as $kg): ?>
+                                    <option value="<?= $kg['kdgn_id']; ?>"><?= $kg['kindergarden_name']; ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
+                        <span class="invalid-feedback text-danger">Invalid Kindergarden.</span>
                     </div>
                     
                     <div class="col-md-4">
                         <label class="form-label"><?= lang('Input.branch'); ?> <span class="text-danger">*</span></label>
-                        <select class="form-select" name="branch_id" required>
+                        <select class="form-select" name="branchId" required>
                             <option value=""><?= lang('Input.select_branch'); ?></option>
-                            <?php foreach ($branches as $branch): ?>
-                                <option value="<?= $branch['branch_id']; ?>"><?= $branch['branch_name']; ?></option>
-                            <?php endforeach; ?>
+                            <?php if (isset($branches) && is_array($branches)): ?>
+                                <?php foreach ($branches as $branch): ?>
+                                    <option value="<?= $branch['branch_id']; ?>"><?= $branch['branch_name']; ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
+                        <span class="invalid-feedback text-danger">Invalid Branch.</span>
                     </div>
                     
                     <div class="col-md-4">
                         <label class="form-label"><?= lang('Input.management_id'); ?> <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" name="kdmgm_id" value="1" required>
+                        <input type="number" class="form-control" name="kdmgmId" value="1" required>
+                        <span class="invalid-feedback text-danger">Invalid Management ID.</span>
                     </div>
 
                     <!-- Login Account -->
@@ -231,7 +245,7 @@
                             
                         <div class="col-md-4">
                             <label class="form-label"><?= lang('Input.child_care_access'); ?></label>
-                            <select class="form-select" name="branch_childcare">
+                            <select class="form-select" name="branchChildcare">
                                 <option value="2"><?= lang('Input.no'); ?></option>
                                 <option value="1"><?= lang('Input.yes'); ?></option>
                             </select>
@@ -240,15 +254,13 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= lang('Nav.cancel'); ?></button>
-                <button type="submit" class="btn btn-primary">
-                    <i class="ph-bold ph-check me-1"></i><?= lang('Nav.add_teacher'); ?>
-                </button>
+                <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal"><?= lang('Nav.cancel'); ?></button>
+                <button type="submit" class="btn btn-primary"><?= lang('Nav.add_teacher'); ?></button>
             </div>
             </form>
         </div>
     </div>
-</div>
+</section>
 
 <!-- JavaScript and CSS -->
 <link rel="stylesheet" type="text/css" href="<?= base_url('assets/vendors/datepikar/flatpickr.min.css'); ?>">
@@ -259,24 +271,82 @@
 <script type="text/javascript" src="<?= base_url('assets/vendors/datatable/jquery.dataTables.min.js'); ?>"></script>
 <script type="text/javascript" src="<?= base_url('assets/js/custom/table_lang.js'); ?>"></script>
 
+<!-- Include SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-document.addEventListener('DOMContentLoaded', (event) => {
-    // Language setup
-    if ('<?= $_SESSION['lang'] ?>' == 'ms') {
-        langs = malay;
-    } else if ('<?= $_SESSION['lang'] ?>' == 'cn') {
-        langs = chinese;
-    } else if ('<?= $_SESSION['lang'] ?>' == 'zh') {
-        langs = tradchinese;
-    } else if ('<?= $_SESSION['lang'] ?>' == 'th') {
-        langs = thai;
-    } else if ('<?= $_SESSION['lang'] ?>' == 'vn') {
-        langs = viet;
-    } else {
-        langs = english;
+// Global functions
+function editTeacherStatus(teacherId, newStatus) {
+    var params = {};
+    params['teacherId'] = teacherId;
+    params['status'] = newStatus;
+
+    $.ajax({
+        url: 'teacher/modify-status',
+        type: 'POST',
+        data: { params: params },
+        dataType: 'json',
+        success: function(data) {
+            if (data.code == 1) {
+                Swal.fire("", data.message, "success").then(() => {
+                    $('#teacherTable').DataTable().ajax.reload(null, false);
+                });
+            } else if (data.code == 69) {
+                Swal.fire("", data.message + " (Code: " + data.code + ")", "warning").then(() => {
+                    userLogOut();
+                });
+            } else {
+                Swal.fire("", data.message + " (Code: " + data.code + ")", "error");
+            }
+        },
+        error: function(xhr, status, error) {
+            try {
+                var errorData = JSON.parse(xhr.responseText);
+                if (errorData.code == 1) {
+                    Swal.fire("", errorData.message, "success").then(() => {
+                        $('#teacherTable').DataTable().ajax.reload(null, false);
+                    });
+                    return;
+                }
+            } catch (e) {
+                // Silent fail
+            }
+            
+            Swal.fire("Error!", "Something went wrong", "error");
+        }
+    });
+}
+
+function getTeacher(teacherId) {
+    window.location.href = 'teacher/view/' + teacherId;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Language setup with fallback
+    var langs = {};
+    try {
+        <?php if (isset($_SESSION['lang'])): ?>
+        if ('<?= $_SESSION['lang'] ?>' == 'ms') {
+            langs = typeof malay !== 'undefined' ? malay : {};
+        } else if ('<?= $_SESSION['lang'] ?>' == 'cn') {
+            langs = typeof chinese !== 'undefined' ? chinese : {};
+        } else if ('<?= $_SESSION['lang'] ?>' == 'zh') {
+            langs = typeof tradchinese !== 'undefined' ? tradchinese : {};
+        } else if ('<?= $_SESSION['lang'] ?>' == 'th') {
+            langs = typeof thai !== 'undefined' ? thai : {};
+        } else if ('<?= $_SESSION['lang'] ?>' == 'vn') {
+            langs = typeof viet !== 'undefined' ? viet : {};
+        } else {
+            langs = typeof english !== 'undefined' ? english : {};
+        }
+        <?php else: ?>
+        langs = typeof english !== 'undefined' ? english : {};
+        <?php endif; ?>
+    } catch (e) {
+        langs = {};
     }
 
-    var pageindex = 1, debug = false;
+    var pageindex = 1;
     
     // Initialize DataTable
     const teacherTable = $('#teacherTable').DataTable({
@@ -293,43 +363,43 @@ document.addEventListener('DOMContentLoaded', (event) => {
         pageLength: 20,
         
         columnDefs: [
-            { targets: 0, width: '10%', className: 'text-left' },   // Teacher Name
-            { targets: 1, width: '6%', className: 'text-left' },    // Age
-            { targets: 2, width: '12%', className: 'text-left' },   // Qualification
-            { targets: 3, width: '7%', className: 'text-left' },    // KAP Certificate
-            { targets: 4, width: '7%', className: 'text-left' },    // Hired Date
-            { targets: 5, width: '7%', className: 'text-left' },    // Phone
-            { targets: 6, width: '20%', className: 'text-left',     // Branch
+            { targets: 0, width: '10%', className: 'text-left' },
+            { targets: 1, width: '6%', className: 'text-left' },
+            { targets: 2, width: '12%', className: 'text-left' },
+            { targets: 3, width: '7%', className: 'text-left' },
+            { targets: 4, width: '7%', className: 'text-left' },
+            { targets: 5, width: '7%', className: 'text-left' },
+            { targets: 6, width: '20%', className: 'text-left',
                 render: function(data, type, row) {
-                    if (type === 'display' && data.length > 40) {
-                        return '<span title="' + data + '">' + data.substr(0, 40);
+                    if (type === 'display' && data && data.length > 40) {
+                        return '<span title="' + data + '">' + data.substr(0, 40) + '...</span>';
                     }
                     return data;
                 }
             },
-            { targets: 7, width: '7%', className: 'text-left' },    // Status
-            { targets: 8, width: '5%', className: 'text-left' }     // Actions
+            { targets: 7, width: '7%', className: 'text-left' },
+            { targets: 8, width: '5%', className: 'text-left' }
         ],
 
         ajax: function(data, callback, settings) {
             if (settings._iRecordsTotal == 0) {
                 pageindex = 1;
             } else {
-                var pageindex = settings._iDisplayStart / settings._iDisplayLength + 1;
+                pageindex = settings._iDisplayStart / settings._iDisplayLength + 1;
             }
 
             const teacherName = $('.filterForm [name=teacherName]').val();
             const status = $('.filterForm [name=status] option:selected').val();
             const qualification = $('.filterForm [name=qualification]').val();
-            const branch_id = $('.filterForm [name=branch_id] option:selected').val();
+            const branchId = $('.filterForm [name=branchId] option:selected').val();
 
             var payload = JSON.stringify({
                 pageindex: pageindex,
                 rowperpage: data.length,
-                teacherName: teacherName,
-                status: status,
-                qualification: qualification,
-                branch_id: branch_id,
+                teacherName: teacherName || '',
+                status: status || 'all',
+                qualification: qualification || '',
+                branchId: branchId || '',
             });
 
             $.ajax({
@@ -348,7 +418,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         return;
                     } else if (res.code == 69) {
                         Swal.fire("", res.message + " (Code: " + res.code + ")", "warning").then(() => {
-                            userLogOut();
+                            if (typeof userLogOut === 'function') {
+                                userLogOut();
+                            }
                         });
                         return;
                     } else {
@@ -359,7 +431,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         });
                     }
                 },
-                error: function() {
+                error: function(xhr, status, error) {
                     callback({
                         recordsTotal: 0,
                         recordsFiltered: 0,
@@ -371,93 +443,54 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 
     // Filter form submission
-    $('.filterForm').on('submit', function(e) {
+    $('.filterForm').off().on('submit', function(e) {
         e.preventDefault();
         teacherTable.draw();
     });
 
     // Add teacher form submission
-    $('#addTeacherForm').on('submit', function(e) {
+    $('.addTeacherForm').off().on('submit', function(e) {
         e.preventDefault();
         
-        $.ajax({
-            url: '/teacher/add-new',
-            type: 'POST',
-            data: $(this).serialize(),
-            success: function(response) {
-                if (response.code === 1) {
-                    Swal.fire({
-                        title: '<?= lang("Label.success"); ?>!',
-                        text: response.message,
-                        icon: 'success'
-                    }).then(() => {
-                        $('#modal-addTeacher').modal('hide');
-                        $('#addTeacherForm')[0].reset();
+        if (this.checkValidity() !== false) {
+            $('.addTeacherForm [type=submit]').prop('disabled', true);
+            
+            var params = {};
+            var formObj = $(this).closest("form");
+            $.each($(formObj).serializeArray(), function (index, value) {
+                params[value.name] = value.value;
+            });
+
+            $.post('teacher/add-new', {
+                params: params
+            }, function(data, status) {
+                const obj = typeof data === 'string' ? JSON.parse(data) : data;
+                if (obj.code === 1) {
+                    Swal.fire("", obj.message, "success").then(() => {
+                        $('.modal-addTeacher').modal('hide');
                         teacherTable.draw();
                     });
                 } else {
-                    Swal.fire({
-                        title: '<?= lang("Label.error"); ?>!',
-                        text: response.message,
-                        icon: 'error'
-                    });
+                    Swal.fire("", obj.message + " (Code: " + obj.code + ")", "error");
                 }
-            },
-            error: function() {
-                Swal.fire({
-                    title: '<?= lang("Label.error"); ?>!',
-                    text: '<?= lang("Label.something_went_wrong"); ?>',
-                    icon: 'error'
-                });
-            }
-        });
-    });
-});
-
-// View teacher details
-function viewTeacher(teacherId) {
-    window.location.href = '/teacher/view/' + teacherId;
-}
-
-// Change teacher status
-function changeTeacherStatus(teacherId, newStatus) {
-    const statusText = {
-        '1': '<?= lang("Input.active"); ?>',
-        '2': '<?= lang("Input.inactive"); ?>', 
-        '3': '<?= lang("Input.terminated"); ?>'
-    };
-
-    $.ajax({
-        url: '/teacher/change-status',
-        type: 'POST',
-        data: { 
-            teacher_id: teacherId,
-            status: newStatus
-        },
-        success: function(response) {
-            if (response.code === 1) {
-                Swal.fire({
-                    title: '<?= lang("Label.updated"); ?>!',
-                    text: `<?= lang("Label.teacher_status_changed"); ?> ${statusText[newStatus]}.`,
-                    icon: 'success'
-                }).then(() => {
-                    $('#teacherTable').DataTable().ajax.reload(null, false);
-                });
-            } else {
-                Swal.fire({
-                    title: '<?= lang("Label.error"); ?>!',
-                    text: response.message,
-                    icon: 'error'
-                });
-            }
-        },
-        error: function() {
-            Swal.fire({
-                title: '<?= lang("Label.error"); ?>!',
-                text: '<?= lang("Label.failed_to_change_status"); ?>',
-                icon: 'error'
+            })
+            .done(function() {
+                $('.addTeacherForm [type=submit]').prop('disabled', false);
+            })
+            .fail(function() {
+                Swal.fire("", "Something went wrong", "error");
+                $('.addTeacherForm [type=submit]').prop('disabled', false);
             });
         }
     });
-}
+
+    // Modal reset event
+    const addTeacherEvent = document.getElementById('modal-addTeacher');
+    if (addTeacherEvent) {
+        addTeacherEvent.addEventListener('hidden.bs.modal', function (event) {
+            $('form').removeClass('was-validated');
+            $('form').trigger('reset');
+        });
+    }
+});
 </script>

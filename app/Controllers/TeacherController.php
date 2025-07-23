@@ -2,18 +2,13 @@
 
 namespace App\Controllers;
 
-use App\Models\TeacherModel;
-use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\I18n\Time;
 
-class TeacherController extends ResourceController
+class TeacherController extends BaseController
 {
     /*
     * Protected
     */
-
-    protected $teacherModel;
-    protected $session;
 
     /*
     * End Protected
@@ -23,485 +18,347 @@ class TeacherController extends ResourceController
     * Public
     */
 
-    public function __construct()
+    public function updateTeacherStatus()
     {
-        $this->teacherModel = new TeacherModel();
-        $this->session = session();
-    }
-
-    /**
-     * Get teachers list with pagination (AJAX)
-     */
-    public function teacherListWithPagination()
-    {
-        if (!$this->session->get('isLoggedIn')) {
-            return $this->response->setJSON([
+        // Set content type to JSON
+        header('Content-Type: application/json');
+        
+        if( !session()->get('isLoggedIn') ):
+            echo json_encode([
                 'code' => 69,
-                'message' => 'Session expired'
+                'message' => 'Not logged in'
             ]);
-        }
+            return;
+        endif;
 
-        try {
-            $input = json_decode($this->request->getBody(), true);
-            
-            $params = [
-                'pageindex' => $input['pageindex'] ?? 1,
-                'rowperpage' => $input['rowperpage'] ?? 20,
-                'teacherName' => $input['teacherName'] ?? '',
-                'status' => $input['status'] ?? 'all',
-                'qualification' => $input['qualification'] ?? '',
-                'branch_id' => $input['branch_id'] ?? ''
-            ];
-
-            // Use model method 
-            $result = $this->teacherModel->getTeachersWithPagination($params);
-
-            // Format data for DataTables
-            $formattedData = [];
-            foreach ($result['data'] as $row) {
-                $kapBadge = $row['kap_certificate'] === '1' 
-                    ? '<span class="badge bg-primary">Yes</span>'
-                    : '<span class="badge bg-secondary">No</span>';
-
-                $actions = '
-                    <button class="btn btn-sm btn-light-primary" onclick="viewTeacher(' . $row['teacher_id'] . ')">
-                        <i class="ph-bold ph-eye me-1"></i>
-                    </button>';
-
-                // Status buttons 
-                switch ($row['status']) {
-                    case '1': // Active
-                        $statusButtons = '
-                            <div class="text-left">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button class="btn btn-success" 
-                                        title="Set Inactive" 
-                                        onclick="changeTeacherStatus(' . $row['teacher_id'] . ', \'2\')">
-                                        <i class="ph-bold ph-check"></i>
-                                    </button>
-                                    <button class="btn btn-danger" 
-                                        title="Terminate" 
-                                        onclick="changeTeacherStatus(' . $row['teacher_id'] . ', \'3\')">
-                                        <i class="ph-bold ph-x"></i>
-                                    </button>
-                                </div>
-                            </div>';
-                        break;
-
-                    case '2': // Inactive
-                        $statusButtons = '
-                            <div class="text-left">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button class="btn btn-warning" 
-                                        title="Set Active" 
-                                        onclick="changeTeacherStatus(' . $row['teacher_id'] . ', \'1\')">
-                                        <i class="ph-bold ph-pause"></i>
-                                    </button>
-                                    <button class="btn btn-danger" 
-                                        title="Terminate" 
-                                        onclick="changeTeacherStatus(' . $row['teacher_id'] . ', \'3\')">
-                                        <i class="ph-bold ph-x"></i>
-                                    </button>
-                                </div>
-                            </div>';
-                        break;
-
-                    case '3': // Terminated
-                    default:
-                        $statusButtons = '
-                            <div class="text-left">
-                                <span class="badge bg-danger fs-8 px-2 py-2">Terminated</span>
-                            </div>';
-                        break;
+        $verifyLogged = $this->verifyLoggedUser();
+        if( !$verifyLogged['timeout'] ):
+            try {
+                $params = $this->request->getpost('params');
+                
+                if (!$params || !isset($params['teacherId']) || !isset($params['status'])) {
+                    echo json_encode([
+                        'code' => 0,
+                        'message' => 'Missing required parameters'
+                    ]);
+                    return;
                 }
-
-                // Use Time class for better date formatting 
-                $hiredDate = Time::parse($row['hired_date'])->toLocalizedString('MMM dd, yyyy');
-
-                $formattedData[] = [
-                    $row['teacher_name'],
-                    $row['age'],
-                    $row['highest_qualification'],
-                    $kapBadge,
-                    $hiredDate,
-                    $row['phone_number'],
-                    $row['branch_name'] ?? 'N/A',
-                    $statusButtons,
-                    $actions
+                
+                $payload = [
+                    'teacher_id' => (int)$params['teacherId'],
+                    'status' => (int)$params['status'],
+                    'modified_date' => date('Y-m-d H:i:s'),
                 ];
-            }
-
-            return $this->response->setJSON([
-                'code' => 1,
-                'message' => 'Success',
-                'data' => $formattedData,
-                'totalRecord' => $result['totalRecord']
-            ]);
-
-        } catch (\Exception $e) {
-            return $this->response->setJSON([
-                'code' => 0,
-                'message' => 'Error: ' . $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
-     * Add new teacher 
-     */
-    public function addNewTeacher()
-    {
-        if (!$this->session->get('isLoggedIn')) {
-            return $this->response->setJSON([
-                'code' => 69,
-                'message' => 'Session expired'
-            ]);
-        }
-
-        try {
-            $validation = \Config\Services::validation();
-            $validation->setRules([
-                'teacher_name' => 'required|min_length[2]|max_length[100]',
-                'age' => 'required|integer|greater_than[17]|less_than[100]',
-                'highest_qualification' => 'required|max_length[200]',
-                'hired_date' => 'required|valid_date[Y-m-d]',
-                'id_number' => 'required|max_length[50]',
-                'phone_number' => 'required|max_length[20]',
-                'address' => 'required',
-                'branch_id' => 'required|integer',
-                'kdgn_id' => 'required|integer',
-                'kdmgm_id' => 'required|integer'
-            ]);
-
-            if (!$validation->withRequest($this->request)->run()) {
-                return $this->response->setJSON([
+                
+                $res = $this->TeacherModel->updateTeacherStatus($payload);
+                
+                // Make sure we have a valid response
+                if (!is_array($res)) {
+                    echo json_encode([
+                        'code' => 0,
+                        'message' => 'Invalid model response'
+                    ]);
+                    return;
+                }
+                
+                echo json_encode($res);
+                
+            } catch (Exception $e) {
+                echo json_encode([
                     'code' => 0,
-                    'message' => 'Validation failed',
-                    'errors' => $validation->getErrors()
+                    'message' => 'Controller error: ' . $e->getMessage()
                 ]);
             }
+        else:
+            echo json_encode([
+                'code' => 69,
+                'message' => 'Session timeout'
+            ]);
+        endif;
+    }
 
-            // Check duplicates using model methods
-            if ($this->teacherModel->isIdNumberExists($this->request->getPost('id_number'))) {
-                return $this->response->setJSON([
+    public function addNewTeacher()
+    {
+        if( !session()->get('isLoggedIn') ): return false; endif;
+
+        $verifyLogged = $this->verifyLoggedUser();
+        if( !$verifyLogged['timeout'] ):
+            // Check for duplicate ID number
+            $checkIdNumber = $this->TeacherModel->checkIdNumberExists([
+                'id_number' => $this->request->getpost('params')['idNumber']
+            ]);
+            
+            if( $checkIdNumber['exists'] ):
+                echo json_encode([
                     'code' => 0,
                     'message' => 'ID Number already exists'
                 ]);
-            }
+                return;
+            endif;
 
-            $teacherData = [
-                'teacher_name' => $this->request->getPost('teacher_name'),
-                'age' => $this->request->getPost('age'),
-                'highest_qualification' => $this->request->getPost('highest_qualification'),
-                'kap_certificate' => $this->request->getPost('kap_certificate') ?: '2',
-                'hired_date' => $this->request->getPost('hired_date'),
-                'id_number' => $this->request->getPost('id_number'),
-                'phone_number' => $this->request->getPost('phone_number'),
-                'address' => $this->request->getPost('address'),
-                'branch_id' => $this->request->getPost('branch_id'),
-                'kdgn_id' => $this->request->getPost('kdgn_id'),
-                'kdmgm_id' => $this->request->getPost('kdmgm_id'),
+            $payload = [
+                'teacher_name' => $this->request->getpost('params')['teacherName'],
+                'age' => (int)$this->request->getpost('params')['age'],
+                'highest_qualification' => $this->request->getpost('params')['qualification'],
+                'kap_certificate' => $this->request->getpost('params')['kapCertificate'] ?: '2',
+                'hired_date' => $this->request->getpost('params')['hiredDate'],
+                'id_number' => $this->request->getpost('params')['idNumber'],
+                'phone_number' => $this->request->getpost('params')['phoneNumber'],
+                'address' => $this->request->getpost('params')['address'],
+                'branch_id' => (int)$this->request->getpost('params')['branchId'],
+                'kdgn_id' => (int)$this->request->getpost('params')['kdgnId'],
+                'kdmgm_id' => (int)$this->request->getpost('params')['kdmgmId'],
                 'status' => '1'
             ];
 
-            $loginData = null;
-            $username = $this->request->getPost('username');
-            $password = $this->request->getPost('password');
-            
-            if (!empty($username) && !empty($password)) {
-                if ($this->teacherModel->isUsernameExists($username)) {
-                    return $this->response->setJSON([
+            // Handle login account creation if provided
+            $loginPayload = null;
+            if( !empty($this->request->getpost('params')['username']) ):
+                $checkUsername = $this->TeacherModel->checkUsernameExists([
+                    'username' => $this->request->getpost('params')['username']
+                ]);
+                
+                if( $checkUsername['exists'] ):
+                    echo json_encode([
                         'code' => 0,
                         'message' => 'Username already exists'
                     ]);
-                }
+                    return;
+                endif;
 
-                $loginData = [
-                    'kdgn_id' => $teacherData['kdgn_id'],
-                    'kdmgm_id' => $teacherData['kdmgm_id'],
-                    'branch_username' => $username,
-                    'branch_password' => password_hash($password, PASSWORD_DEFAULT),
+                $loginPayload = [
+                    'kdgn_id' => $payload['kdgn_id'],
+                    'kdmgm_id' => $payload['kdmgm_id'],
+                    'branch_username' => $this->request->getpost('params')['username'],
+                    'branch_password' => password_hash($this->request->getpost('params')['password'], PASSWORD_DEFAULT),
                     'branch_role' => '2',
-                    'branch_childcare' => $this->request->getPost('branch_childcare') ?: '2',
-                    'branch_name' => $teacherData['teacher_name'],
+                    'branch_childcare' => $this->request->getpost('params')['branchChildcare'] ?: '2',
+                    'branch_name' => $payload['teacher_name'],
                     'branch_status' => '1'
                 ];
-            }
+            endif;
 
-            // Use model method for creation
-            $teacherId = $this->teacherModel->createTeacherWithAccount($teacherData, $loginData);
-
-            return $this->response->setJSON([
-                'code' => 1,
-                'message' => 'Teacher added successfully',
-                'teacher_id' => $teacherId
-            ]);
-
-        } catch (\Exception $e) {
-            return $this->response->setJSON([
-                'code' => 0,
-                'message' => 'Error: ' . $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
-     * Get teacher details 
-     */
-    public function getTeacherDetails($teacherId)
-    {
-        if (!$this->session->get('isLoggedIn')) {
-            return $this->response->setJSON([
+            $res = $this->TeacherModel->insertNewTeacher($payload, $loginPayload);
+            echo json_encode($res);
+        else:
+            echo json_encode([
                 'code' => 69,
-                'message' => 'Session expired'
+                'message' => lang('Response.sessiontimeout')
             ]);
-        }
-
-        try {
-            $teacher = $this->teacherModel->getTeacherDetails($teacherId);
-            
-            if (!$teacher) {
-                return $this->response->setJSON([
-                    'code' => 0,
-                    'message' => 'Teacher not found'
-                ]);
-            }
-
-            return $this->response->setJSON([
-                'code' => 1,
-                'message' => 'Success',
-                'data' => $teacher
-            ]);
-
-        } catch (\Exception $e) {
-            return $this->response->setJSON([
-                'code' => 0,
-                'message' => 'Error: ' . $e->getMessage()
-            ]);
-        }
+        endif;
     }
 
-    /**
-     * Update teacher
-     */
+    public function teacherListWithPagination()
+    {
+        if( !session()->get('isLoggedIn') ): return false; endif;
+
+        $raw = json_decode(file_get_contents('php://input'),1);
+
+        $verifyLogged = $this->verifyLoggedUser();
+        if( !$verifyLogged['timeout'] ):
+            $payload = $this->TeacherModel->selectAllTeachersWithPagination([
+                'pageindex' => $raw['pageindex'],
+                'rowperpage' => $raw['rowperpage'],
+                'teacherName' => $raw['teacherName'],
+                'status' => (int)$raw['status'],
+                'qualification' => $raw['qualification'],
+                'branchId' => $raw['branchId'],
+            ]);
+
+            if( $payload['code']==1 && $payload['data']!=[] ):
+                $data = [];
+                foreach( $payload['data'] as $i ):
+                    $date = Time::parse(date('Y-m-d H:i:s', strtotime($i['hired_date'])));
+                    $hiredDate = $date->toDateTimeString();
+
+                    $modifiedDate = '';
+                    if( !empty($i['modified_date']) ):
+                        $date2 = Time::parse(date('Y-m-d H:i:s', strtotime($i['modified_date'])));
+                        $modifiedDate .= $date2->toDateTimeString();
+                    else:
+                        $modifiedDate .= '---';
+                    endif;
+
+                    $kapBadge = $i['kap_certificate'] === '1' 
+                        ? '<span class="badge bg-primary">Yes</span>'
+                        : '<span class="badge bg-secondary">No</span>';
+
+                    // Fix the status buttons to match the JavaScript function name
+                    if( $i['status']=='1' ):
+                        $status = '<a href="javascript:void(0);" class="btn btn-success btn-xs icon-btn me-1" onclick="editTeacherStatus(\''.$i['teacher_id'].'\',\'2\');" title="Set Inactive"><i class="ph-bold ph-check"></i></a>';
+                        $status .= '<a href="javascript:void(0);" class="btn btn-danger btn-xs icon-btn" onclick="editTeacherStatus(\''.$i['teacher_id'].'\',\'3\');" title="Terminate"><i class="ph-bold ph-x"></i></a>';
+                    elseif( $i['status']=='2' ):
+                        $status = '<a href="javascript:void(0);" class="btn btn-warning btn-xs icon-btn me-1" onclick="editTeacherStatus(\''.$i['teacher_id'].'\',\'1\');" title="Set Active"><i class="ph-bold ph-pause"></i></a>';
+                        $status .= '<a href="javascript:void(0);" class="btn btn-danger btn-xs icon-btn" onclick="editTeacherStatus(\''.$i['teacher_id'].'\',\'3\');" title="Terminate"><i class="ph-bold ph-x"></i></a>';
+                    else:
+                        $status = '<span class="badge bg-danger fs-8 px-2 py-2">Terminated</span>';
+                    endif;
+
+                    $action = '<div class="">';
+                    $action .= '<a href="javascript:void(0);" class="btn btn-light-primary btn-xs icon-btn b-r-4 me-1" onclick="getTeacher(\''.$i['teacher_id'].'\');"><i class="ph-bold ph-eye text-success"></i></a>';
+                    $action .= '</div>';
+
+                    $row = [];
+                    $row[] = $i['teacher_name'];
+                    $row[] = $i['age'];
+                    $row[] = $i['highest_qualification'];
+                    $row[] = $kapBadge;
+                    $row[] = $hiredDate;
+                    $row[] = $i['phone_number'];
+                    $row[] = $i['branch_name'] ?? 'N/A';
+                    $row[] = $status;
+                    $row[] = $action;
+                    $data[] = $row;
+                endforeach;
+                echo json_encode([
+                    'data'=>$data, 
+                    'code'=>1, 
+                    'pageIndex'=>$payload['pageIndex'], 
+                    'rowPerPage'=>$payload['rowPerPage'], 
+                    'totalPage'=>$payload['totalPage'], 
+                    'totalRecord'=>$payload['totalRecord']
+                ]);
+            else:
+                echo json_encode(['no data']);
+            endif;
+        else:
+            echo json_encode([
+                'code' => 69,
+                'message' => 'Session timeout'
+            ]);
+        endif;
+    }
+
+    public function getTeacherDetails()
+    {
+        if( !session()->get('isLoggedIn') ): return false; endif;
+
+        $verifyLogged = $this->verifyLoggedUser();
+        if( !$verifyLogged['timeout'] ):
+            $teacherId = (int)$this->request->getpost('params')['teacherId'];
+            $res = $this->TeacherModel->selectTeacherDetails(['teacher_id' => $teacherId]);
+            echo json_encode($res);
+        else:
+            echo json_encode([
+                'code' => 69,
+                'message' => lang('Response.sessiontimeout')
+            ]);
+        endif;
+    }
+
     public function updateTeacher()
     {
-        if (!$this->session->get('isLoggedIn')) {
-            return $this->response->setJSON([
-                'code' => 69,
-                'message' => 'Session expired'
-            ]);
-        }
+        if( !session()->get('isLoggedIn') ): return false; endif;
 
-        try {
-            $teacherId = $this->request->getPost('teacher_id');
+        $verifyLogged = $this->verifyLoggedUser();
+        if( !$verifyLogged['timeout'] ):
+            $teacherId = (int)$this->request->getpost('params')['teacherId'];
             
-            $validation = \Config\Services::validation();
-            $validation->setRules([
-                'teacher_id' => 'required|integer',
-                'teacher_name' => 'required|min_length[2]|max_length[100]',
-                'age' => 'required|integer|greater_than[17]|less_than[100]',
-                'highest_qualification' => 'required|max_length[200]',
-                'hired_date' => 'required|valid_date[Y-m-d]',
-                'id_number' => 'required|max_length[50]',
-                'phone_number' => 'required|max_length[20]',
-                'address' => 'required'
+            // Check for duplicate ID number (excluding current teacher)
+            $checkIdNumber = $this->TeacherModel->checkIdNumberExists([
+                'id_number' => $this->request->getpost('params')['idNumber'],
+                'exclude_teacher_id' => $teacherId
             ]);
-
-            if (!$validation->withRequest($this->request)->run()) {
-                return $this->response->setJSON([
-                    'code' => 0,
-                    'message' => 'Validation failed',
-                    'errors' => $validation->getErrors()
-                ]);
-            }
-
-            // Check ID number uniqueness
-            if ($this->teacherModel->isIdNumberExists($this->request->getPost('id_number'), $teacherId)) {
-                return $this->response->setJSON([
+            
+            if( $checkIdNumber['exists'] ):
+                echo json_encode([
                     'code' => 0,
                     'message' => 'ID Number already exists'
                 ]);
-            }
+                return;
+            endif;
 
-            $teacherData = [
-                'teacher_name' => $this->request->getPost('teacher_name'),
-                'age' => $this->request->getPost('age'),
-                'highest_qualification' => $this->request->getPost('highest_qualification'),
-                'kap_certificate' => $this->request->getPost('kap_certificate') ?: '2',
-                'hired_date' => $this->request->getPost('hired_date'),
-                'id_number' => $this->request->getPost('id_number'),
-                'phone_number' => $this->request->getPost('phone_number'),
-                'address' => $this->request->getPost('address'),
-                'status' => $this->request->getPost('status') ?: '1', 
-                'modified_date' => date('Y-m-d H:i:s') 
+            $payload = [
+                'teacher_id' => $teacherId,
+                'teacher_name' => $this->request->getpost('params')['teacherName'],
+                'age' => (int)$this->request->getpost('params')['age'],
+                'highest_qualification' => $this->request->getpost('params')['qualification'],
+                'kap_certificate' => $this->request->getpost('params')['kapCertificate'] ?: '2',
+                'hired_date' => $this->request->getpost('params')['hiredDate'],
+                'id_number' => $this->request->getpost('params')['idNumber'],
+                'phone_number' => $this->request->getpost('params')['phoneNumber'],
+                'address' => $this->request->getpost('params')['address'],
+                'status' => $this->request->getpost('params')['status'] ?: '1',
+                'modified_date' => date('Y-m-d H:i:s'),
             ];
 
-            $loginData = null;
-            $username = $this->request->getPost('username');
-            
-            if (!empty($username)) {
-                if ($this->teacherModel->isUsernameExists($username, $teacherId)) {
-                    return $this->response->setJSON([
+            // Handle login account update if provided
+            $loginPayload = null;
+            if( !empty($this->request->getpost('params')['username']) ):
+                $checkUsername = $this->TeacherModel->checkUsernameExists([
+                    'username' => $this->request->getpost('params')['username'],
+                    'exclude_teacher_id' => $teacherId
+                ]);
+                
+                if( $checkUsername['exists'] ):
+                    echo json_encode([
                         'code' => 0,
                         'message' => 'Username already exists'
                     ]);
-                }
+                    return;
+                endif;
 
-                $loginData = [
-                    'branch_username' => $username,
-                    'branch_childcare' => $this->request->getPost('branch_childcare') ?: '2',
-                    'branch_name' => $teacherData['teacher_name'],
-                    'branch_status' => $this->request->getPost('login_status') ?: '1',
-                    'modified_date' => date('Y-m-d H:i:s') 
+                $loginPayload = [
+                    'teacher_id' => $teacherId,
+                    'branch_username' => $this->request->getpost('params')['username'],
+                    'branch_childcare' => $this->request->getpost('params')['branchChildcare'] ?: '2',
+                    'branch_name' => $payload['teacher_name'],
+                    'branch_status' => $this->request->getpost('params')['loginStatus'] ?: '1',
+                    'modified_date' => date('Y-m-d H:i:s')
                 ];
 
-                $password = $this->request->getPost('password');
-                if (!empty($password)) {
-                    $loginData['branch_password'] = password_hash($password, PASSWORD_DEFAULT);
-                }
-            }
+                if( !empty($this->request->getpost('params')['password']) ):
+                    $loginPayload['branch_password'] = password_hash($this->request->getpost('params')['password'], PASSWORD_DEFAULT);
+                endif;
+            endif;
 
-            // Use model method for update
-            $result = $this->teacherModel->updateTeacherWithAccount($teacherId, $teacherData, $loginData);
-
-            if ($result) {
-                return $this->response->setJSON([
-                    'code' => 1,
-                    'message' => 'Teacher updated successfully'
-                ]);
-            } else {
-                return $this->response->setJSON([
-                    'code' => 0,
-                    'message' => 'Failed to update teacher'
-                ]);
-            }
-
-        } catch (\Exception $e) {
-            return $this->response->setJSON([
-                'code' => 0,
-                'message' => 'Error: ' . $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
-     * Change teacher status
-     */
-    public function updateTeacherStatus()
-    {
-        if (!$this->session->get('isLoggedIn')) {
-            return $this->response->setJSON([
+            $res = $this->TeacherModel->updateTeacherWithAccount($payload, $loginPayload);
+            echo json_encode($res);
+        else:
+            echo json_encode([
                 'code' => 69,
-                'message' => 'Session expired'
+                'message' => lang('Response.sessiontimeout')
             ]);
-        }
-
-        try {
-            $teacherId = $this->request->getPost('teacher_id');
-            $newStatus = $this->request->getPost('status');
-            
-            if (empty($teacherId) || empty($newStatus)) {
-                return $this->response->setJSON([
-                    'code' => 0,
-                    'message' => 'Teacher ID and status are required'
-                ]);
-            }
-
-            if (!in_array($newStatus, ['1', '2', '3'])) {
-                return $this->response->setJSON([
-                    'code' => 0,
-                    'message' => 'Invalid status value'
-                ]);
-            }
-
-            $teacher = $this->teacherModel->find($teacherId);
-            if (!$teacher) {
-                return $this->response->setJSON([
-                    'code' => 0,
-                    'message' => 'Teacher not found'
-                ]);
-            }
-
-            // Update with modified date
-            $this->teacherModel->update($teacherId, [
-                'status' => $newStatus,
-                'modified_date' => date('Y-m-d H:i:s')
-            ]);
-
-            $statusText = match($newStatus) {
-                '1' => 'Active',
-                '2' => 'Inactive',
-                '3' => 'Terminated',
-                default => 'Unknown'
-            };
-
-            return $this->response->setJSON([
-                'code' => 1,
-                'message' => "Teacher status changed to {$statusText} successfully"
-            ]);
-
-        } catch (\Exception $e) {
-            return $this->response->setJSON([
-                'code' => 0,
-                'message' => 'Error: ' . $e->getMessage()
-            ]);
-        }
+        endif;
     }
 
-    /**
-     * View teacher details page
-     */
-    public function view($teacherId)
+    public function getTeacherStats()
     {
-        if (!$this->session->get('isLoggedIn')) {
-            return redirect()->to('/');
-        }
+        if( !session()->get('isLoggedIn') ): return false; endif;
 
-        $teacher = $this->teacherModel->getTeacherDetails($teacherId);
-        
-        if (!$teacher) {
-            return redirect()->to('/teachers')->with('error', 'Teacher not found');
-        }
-
-        $data['session'] = $this->session->get('isLoggedIn') ? true : false;
-        $data['pageName'] = 'Teacher Details - ' . $teacher['teacher_name'];
-        $data['teacher'] = $teacher;
-
-        echo view('template/start');
-        echo view('template/header');
-        echo view('teacher/view', $data);
-        echo view('template/footer');
-        echo view('template/end', $data);
-    }
-
-    /**
-     * Get teacher statistics
-     */
-    public function getStats()
-    {
-        if (!$this->session->get('isLoggedIn')) {
-            return $this->response->setJSON([
+        $verifyLogged = $this->verifyLoggedUser();
+        if( !$verifyLogged['timeout'] ):
+            $res = $this->TeacherModel->selectTeacherStats();
+            echo json_encode($res);
+        else:
+            echo json_encode([
                 'code' => 69,
-                'message' => 'Session expired'
+                'message' => lang('Response.sessiontimeout')
             ]);
-        }
+        endif;
+    }
 
-        try {
-            $stats = $this->teacherModel->getTeacherStats();
+    public function getBranchesAndKindergartens()
+    {
+        if( !session()->get('isLoggedIn') ): return false; endif;
+
+        $verifyLogged = $this->verifyLoggedUser();
+        if( !$verifyLogged['timeout'] ):
+            $branches = $this->TeacherModel->selectBranches();
+            $kindergartens = $this->TeacherModel->selectKindergartens();
             
-            return $this->response->setJSON([
+            echo json_encode([
                 'code' => 1,
                 'message' => 'Success',
-                'data' => $stats
+                'branches' => $branches['data'],
+                'kindergartens' => $kindergartens['data']
             ]);
-
-        } catch (\Exception $e) {
-            return $this->response->setJSON([
-                'code' => 0,
-                'message' => 'Error: ' . $e->getMessage()
+        else:
+            echo json_encode([
+                'code' => 69,
+                'message' => lang('Response.sessiontimeout')
             ]);
-        }
+        endif;
     }
 
     /*

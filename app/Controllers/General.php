@@ -10,22 +10,99 @@ class General extends BaseController
 
     public function index_teacher()
     {
-        if (!session()->get('isLoggedIn')) return false;
-
-        $teacherModel = new \App\Models\TeacherModel();
-        $branches = $teacherModel->getBranches();
-        $kindergardens = $teacherModel->getKindergarden();
+        if (!session()->get('isLoggedIn')): return false; endif;
+        
+        // Load the TeacherModel using CodeIgniter's model() helper
+        $teacherModel = model('App\Models\TeacherModel');
+        
+        // Get branches and kindergartens from database
+        $branches = $teacherModel->selectBranches();
+        $kindergartens = $teacherModel->selectKindergartens();
 
         $data = [
-            'session' => true,
+            'session' => session()->get('isLoggedIn') ? true : false,
             'pageName' => lang('Nav.teacher'),
-            'branches' => $branches,
-            'kindergardens' => $kindergardens,
+            'branches' => (isset($branches['data']) && is_array($branches['data'])) ? $branches['data'] : [],
+            'kindergartens' => (isset($kindergartens['data']) && is_array($kindergartens['data'])) ? $kindergartens['data'] : [],
         ];
 
         echo view('template/start');
         echo view('template/header');
         echo view('teacher/index', $data);
+        echo view('template/footer');
+        echo view('template/end', $data);
+    }
+
+    public function index_teacher_view($teacherId)
+    {
+        if (!session()->get('isLoggedIn')): return false; endif;
+        
+        $teacherModel = model('App\Models\TeacherModel');
+        $teacher = $teacherModel->selectTeacherDetails(['teacher_id' => $teacherId]);
+        
+        if (!$teacher || $teacher['code'] != 1) {
+            return redirect()->to('/teachers')->with('error', 'Teacher not found');
+        }
+
+        $data = [
+            'session' => session()->get('isLoggedIn') ? true : false,
+            'pageName' => 'Teacher Details - ' . $teacher['data']['teacher_name'],
+            'teacher' => $teacher['data']
+        ];
+
+        echo view('template/start');
+        echo view('template/header');
+        echo view('teacher/view', $data);
+        echo view('template/footer');
+        echo view('template/end', $data);
+    }
+
+    public function index_teacher_edit($teacherId)
+    {
+        if (!session()->get('isLoggedIn')): return false; endif;
+        
+        $teacherModel = model('App\Models\TeacherModel');
+        $teacher = $teacherModel->selectTeacherDetails(['teacher_id' => $teacherId]);
+        $branches = $teacherModel->selectBranches();
+        $kindergartens = $teacherModel->selectKindergartens();
+        
+        if (!$teacher || $teacher['code'] != 1) {
+            return redirect()->to('/teachers')->with('error', 'Teacher not found');
+        }
+
+        $data = [
+            'session' => session()->get('isLoggedIn') ? true : false,
+            'pageName' => 'Edit Teacher - ' . $teacher['data']['teacher_name'],
+            'teacher' => $teacher['data'],
+            'branches' => $branches['data'] ?? [],
+            'kindergartens' => $kindergartens['data'] ?? [],
+        ];
+
+        echo view('template/start');
+        echo view('template/header');
+        echo view('teacher/edit', $data);
+        echo view('template/footer');
+        echo view('template/end', $data);
+    }
+
+    public function index_teacher_add()
+    {
+        if (!session()->get('isLoggedIn')): return false; endif;
+        
+        $teacherModel = model('App\Models\TeacherModel');
+        $branches = $teacherModel->selectBranches();
+        $kindergartens = $teacherModel->selectKindergartens();
+
+        $data = [
+            'session' => session()->get('isLoggedIn') ? true : false,
+            'pageName' => 'Add New Teacher',
+            'branches' => $branches['data'] ?? [],
+            'kindergartens' => $kindergartens['data'] ?? [],
+        ];
+
+        echo view('template/start');
+        echo view('template/header');
+        echo view('teacher/add', $data);
         echo view('template/footer');
         echo view('template/end', $data);
     }
