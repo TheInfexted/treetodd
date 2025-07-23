@@ -18,7 +18,7 @@
             <div class="col-md-3">
                 <ul class="footer-text text-end">
                     <li>
-                        Power By <a target="_blank" href="<?=$_ENV['powerCompanyWebsite'];?>"><?=$_ENV['powerBy'];?></a>
+                        Powered By <a target="_blank" href="<?=$_ENV['powerCompanyWebsite'];?>"><?=$_ENV['powerBy'];?></a>
                     </li>
                 </ul>
             </div>
