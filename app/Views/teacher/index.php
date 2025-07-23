@@ -38,7 +38,17 @@
                                         </div>
                                         <div class="col-xl-3 col-lg-3 col-md-6 col-12">
                                             <label class="form-label"><?= lang('Input.qualification'); ?></label>
-                                            <input type="text" class="form-control" name="qualification" placeholder="<?= lang('Input.search_qualification'); ?>">
+                                            <select class="form-select" name="qualification">
+                                                <option value=""><?= lang('Input.search_qualification'); ?></option>
+                                                <option value="No formal education"><?= lang('Input.no_formal_education'); ?></option>
+                                                <option value="Primary education"><?= lang('Input.primary_education'); ?></option>
+                                                <option value="Secondary education"><?= lang('Input.secondary_education'); ?></option>
+                                                <option value="GED"><?= lang('Input.ged'); ?></option>
+                                                <option value="Vocational qualification"><?= lang('Input.vocational_qualification'); ?></option>
+                                                <option value="Bachelor's degree"><?= lang('Input.bachelors_degree'); ?></option>
+                                                <option value="Master's degree"><?= lang('Input.masters_degree'); ?></option>
+                                                <option value="Doctorate or higher"><?= lang('Input.doctorate_or_higher'); ?></option>
+                                            </select>
                                         </div>
                                         <div class="col-xl-3 col-lg-3 col-md-6 col-12">
                                             <label class="form-label"><?= lang('Input.branch'); ?></label>

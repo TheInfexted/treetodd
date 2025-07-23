@@ -50,8 +50,8 @@ return [
     'last_modified' => 'Last Modified',
     
     // Form placeholders and help text
-    'search_by_name' => 'Search by name...',
-    'search_qualification' => 'Search qualification...',
+    'search_by_name' => 'Search by name',
+    'search_qualification' => 'Select qualification',
     'select_one' => '-- select one --',
     'select_kindergarden' => 'Select Kindergarden',
     'select_branch' => 'Select Branch',

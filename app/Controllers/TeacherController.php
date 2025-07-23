@@ -338,29 +338,6 @@ class TeacherController extends BaseController
         endif;
     }
 
-    public function getBranchesAndKindergartens()
-    {
-        if( !session()->get('isLoggedIn') ): return false; endif;
-
-        $verifyLogged = $this->verifyLoggedUser();
-        if( !$verifyLogged['timeout'] ):
-            $branches = $this->TeacherModel->selectBranches();
-            $kindergartens = $this->TeacherModel->selectKindergartens();
-            
-            echo json_encode([
-                'code' => 1,
-                'message' => 'Success',
-                'branches' => $branches['data'],
-                'kindergartens' => $kindergartens['data']
-            ]);
-        else:
-            echo json_encode([
-                'code' => 69,
-                'message' => lang('Response.sessiontimeout')
-            ]);
-        endif;
-    }
-
     /*
     * End Public
     */

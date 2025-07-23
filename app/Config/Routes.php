@@ -34,7 +34,6 @@ $routes->post('teacher/get-details', 'TeacherController::getTeacherDetails', ['f
 $routes->post('teacher/update', 'TeacherController::updateTeacher', ['filter' => 'auth']);
 $routes->post('teacher/modify-status', 'TeacherController::updateTeacherStatus', ['filter' => 'auth']);
 $routes->post('teacher/get-stats', 'TeacherController::getTeacherStats', ['filter' => 'auth']);
-$routes->post('teacher/get-branches-kindergartens', 'TeacherController::getBranchesAndKindergartens', ['filter' => 'auth']);
 // End Teacher
 
 // Classroom
