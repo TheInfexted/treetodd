@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace App\Models;
 
@@ -11,103 +11,96 @@ class TeacherModel extends Model
     protected $allowedFields = [
         'branch_id', 'kdgn_id', 'kdmgm_id', 'teacher_name', 'age', 
         'highest_qualification', 'kap_certificate', 'hired_date', 
-        'id_number', 'phone_number', 'address', 'status'
+        'id_number', 'phone_number', 'address', 'status', 'modified_date'
     ];
     protected $useTimestamps = true;
     protected $createdField = 'created_date';
     protected $updatedField = 'modified_date';
-    protected $dateFormat = 'datetime';
 
     public function __construct()
     {
-        parent::__construct();
         $this->db = db_connect();
+        parent::__construct();
     }
 
     /**
      * Get teachers with pagination and filters
      */
-    public function getTeachersWithPagination($params = [])
+    public function getTeachersWithPagination($params)
     {
-        $builder = $this->db->table('db_teacher t');
-        $builder->select('
-            t.teacher_id,
-            t.teacher_name,
-            t.age,
-            t.highest_qualification,
-            t.kap_certificate,
-            t.hired_date,
-            t.id_number,
-            t.phone_number,
-            t.status,
-            t.created_date,
-            b.branch_name,
-            k.kindergarden_name,
-            IF(kb.branch_id IS NOT NULL, "Yes", "No") as has_login_account
-        ');
-        $builder->join('db_kinder_branch b', 't.branch_id = b.branch_id', 'left');
-        $builder->join('db_kindergarden k', 't.kdgn_id = k.kdgn_id', 'left');
-        $builder->join('db_kinder_branch kb', 't.teacher_id = kb.teacher_ref_id AND kb.branch_role = "2"', 'left');
+        $offset = ($params['pageindex'] - 1) * $params['rowperpage'];
+        
+        $builder = $this->db->table($this->table . ' t');
+        $builder->select('t.*, 
+                         br.branch_name,
+                         k.kindergarden_name,
+                         m.mgm_full_name as manager_name')
+                ->join('db_kinder_branch br', 'br.branch_id = t.branch_id', 'left')
+                ->join('db_kindergarden k', 'k.kdgn_id = t.kdgn_id', 'left')
+                ->join('db_kinder_management m', 'm.kdmgm_id = t.kdmgm_id', 'left');
 
         // Apply filters
         if (!empty($params['teacherName'])) {
             $builder->like('t.teacher_name', $params['teacherName']);
         }
         
-        if (!empty($params['status']) && $params['status'] !== 'all') {
-            $builder->where('t.status', $params['status']);
-        }
-
         if (!empty($params['qualification'])) {
             $builder->like('t.highest_qualification', $params['qualification']);
         }
-
+        
         if (!empty($params['branch_id'])) {
             $builder->where('t.branch_id', $params['branch_id']);
         }
+        
+        if ($params['status'] !== 'all' && !empty($params['status'])) {
+            $builder->where('t.status', $params['status']);
+        }
 
         // Get total count
-        $totalQuery = clone $builder;
-        $totalCount = $totalQuery->countAllResults(false);
+        $totalBuilder = clone $builder;
+        $totalRecord = $totalBuilder->countAllResults();
 
-        // Apply pagination
-        $offset = ($params['pageindex'] - 1) * $params['rowperpage'];
-        $builder->limit($params['rowperpage'], $offset);
-        $builder->orderBy('t.teacher_name', 'ASC');
-
-        $result = $builder->get()->getResultArray();
+        // Get paginated data
+        $data = $builder->orderBy('t.teacher_id', 'DESC')
+                       ->limit($params['rowperpage'], $offset)
+                       ->get()
+                       ->getResultArray();
 
         return [
-            'data' => $result,
-            'totalRecord' => $totalCount
+            'code' => 1,
+            'data' => $data,
+            'totalRecord' => $totalRecord,
+            'pageIndex' => $params['pageindex'],
+            'rowPerPage' => $params['rowperpage']
         ];
     }
 
     /**
-     * Get teacher details with related data
+     * Get teacher details with login info
      */
     public function getTeacherDetails($teacherId)
     {
-        $builder = $this->db->table('db_teacher t');
-        $builder->select('
-            t.*,
-            b.branch_name,
-            k.kindergarden_name,
-            m.mgm_full_name as manager_name,
-            kb.branch_username,
-            kb.branch_status as login_status
-        ');
-        $builder->join('db_kinder_branch b', 't.branch_id = b.branch_id', 'left');
-        $builder->join('db_kindergarden k', 't.kdgn_id = k.kdgn_id', 'left');
-        $builder->join('db_kinder_management m', 't.kdmgm_id = m.kdmgm_id', 'left');
-        $builder->join('db_kinder_branch kb', 't.teacher_id = kb.teacher_ref_id AND kb.branch_role = "2"', 'left');
-        $builder->where('t.teacher_id', $teacherId);
+        $builder = $this->db->table($this->table . ' t');
+        $teacher = $builder->select('t.*, 
+                                   b.branch_username, 
+                                   b.branch_childcare, 
+                                   b.branch_status as login_status,
+                                   br.branch_name,
+                                   k.kindergarden_name,
+                                   m.mgm_full_name as manager_name')
+                          ->join('db_kinder_branch b', 'b.teacher_ref_id = t.teacher_id', 'left')
+                          ->join('db_kinder_branch br', 'br.branch_id = t.branch_id', 'left')
+                          ->join('db_kindergarden k', 'k.kdgn_id = t.kdgn_id', 'left')
+                          ->join('db_kinder_management m', 'm.kdmgm_id = t.kdmgm_id', 'left')
+                          ->where('t.teacher_id', $teacherId)
+                          ->get()
+                          ->getRowArray();
 
-        return $builder->get()->getRowArray();
+        return $teacher;
     }
 
     /**
-     * Create teacher with login account
+     * Create teacher with optional login account
      */
     public function createTeacherWithAccount($teacherData, $loginData = null)
     {
@@ -115,18 +108,23 @@ class TeacherModel extends Model
 
         try {
             // Insert teacher
-            $teacherId = $this->insert($teacherData);
+            $this->insert($teacherData);
+            $teacherId = $this->getInsertID();
 
             // Create login account if provided
-            if ($loginData && $teacherId) {
-                $branchModel = new \App\Models\BranchModel();
+            if ($loginData) {
                 $loginData['teacher_ref_id'] = $teacherId;
-                $loginData['branch_role'] = '2'; // Teacher role
-                $branchModel->insert($loginData);
+                $this->db->table('db_kinder_branch')->insert($loginData);
             }
 
-            $this->db->transCommit();
+            $this->db->transComplete();
+
+            if ($this->db->transStatus() === false) {
+                throw new \Exception('Failed to create teacher');
+            }
+
             return $teacherId;
+
         } catch (\Exception $e) {
             $this->db->transRollback();
             throw $e;
@@ -134,7 +132,7 @@ class TeacherModel extends Model
     }
 
     /**
-     * Update teacher and login account
+     * Update teacher with optional login account
      */
     public function updateTeacherWithAccount($teacherId, $teacherData, $loginData = null)
     {
@@ -144,24 +142,28 @@ class TeacherModel extends Model
             // Update teacher
             $this->update($teacherId, $teacherData);
 
-            // Update or create login account
+            // Update login account if provided
             if ($loginData) {
-                $branchModel = new \App\Models\BranchModel();
-                $existingAccount = $branchModel->where('teacher_ref_id', $teacherId)
-                    ->where('branch_role', '2')
-                    ->first();
+                $existingLogin = $this->db->table('db_kinder_branch')
+                                         ->where('teacher_ref_id', $teacherId)
+                                         ->get()
+                                         ->getRowArray();
 
-                if ($existingAccount) {
-                    $branchModel->update($existingAccount['branch_id'], $loginData);
-                } else {
-                    $loginData['teacher_ref_id'] = $teacherId;
-                    $loginData['branch_role'] = '2';
-                    $branchModel->insert($loginData);
+                if ($existingLogin) {
+                    $this->db->table('db_kinder_branch')
+                            ->where('teacher_ref_id', $teacherId)
+                            ->update($loginData);
                 }
             }
 
-            $this->db->transCommit();
+            $this->db->transComplete();
+
+            if ($this->db->transStatus() === false) {
+                throw new \Exception('Failed to update teacher');
+            }
+
             return true;
+
         } catch (\Exception $e) {
             $this->db->transRollback();
             throw $e;
@@ -169,36 +171,11 @@ class TeacherModel extends Model
     }
 
     /**
-     * Get branches for dropdown
-     */
-    public function getBranches()
-    {
-        return $this->db->table('db_kinder_branch')
-            ->select('branch_id, branch_name')
-            ->where('branch_role', '1') // Only admin branches
-            ->where('branch_status', '1')
-            ->get()
-            ->getResultArray();
-    }
-
-    /**
-     * Get kindergardens for dropdown
-     */
-    public function getKindergarden()
-    {
-        return $this->db->table('db_kindergarden')
-            ->select('kdgn_id, kindergarden_name')
-            ->where('kindergarden_status', '1')
-            ->get()
-            ->getResultArray();
-    }
-
-    /**
      * Check if ID number exists
      */
     public function isIdNumberExists($idNumber, $excludeTeacherId = null)
     {
-        $builder = $this->db->table('db_teacher');
+        $builder = $this->db->table($this->table);
         $builder->where('id_number', $idNumber);
         
         if ($excludeTeacherId) {
@@ -209,18 +186,66 @@ class TeacherModel extends Model
     }
 
     /**
-     * Check if username exists in branch table
+     * Check if username exists
      */
     public function isUsernameExists($username, $excludeTeacherId = null)
     {
         $builder = $this->db->table('db_kinder_branch');
         $builder->where('branch_username', $username);
-        $builder->where('branch_role', '2');
         
         if ($excludeTeacherId) {
             $builder->where('teacher_ref_id !=', $excludeTeacherId);
         }
         
         return $builder->countAllResults() > 0;
+    }
+
+    /**
+     * Get branches for dropdown
+     */
+    public function getBranches()
+    {
+        return $this->db->table('db_kinder_branch')
+                       ->select('branch_id, branch_name')
+                       ->where('branch_role', '1') // Only admin branches
+                       ->get()
+                       ->getResultArray();
+    }
+
+    /**
+     * Get kindergartens for dropdown
+     */
+    public function getKindergarden()
+    {
+        return $this->db->table('db_kindergarden')
+                       ->select('kdgn_id, kindergarden_name')
+                       ->where('kindergarden_status', '1')
+                       ->get()
+                       ->getResultArray();
+    }
+
+    /**
+     * Get teacher statistics
+     */
+    public function getTeacherStats()
+    {
+        $stats = [];
+        
+        // Total teachers
+        $stats['total'] = $this->countAll();
+        
+        // By status
+        $stats['active'] = $this->where('status', '1')->countAllResults(false);
+        $stats['inactive'] = $this->where('status', '2')->countAllResults(false);
+        $stats['terminated'] = $this->where('status', '3')->countAllResults(false);
+        
+        // With KAP certificate
+        $stats['with_kap'] = $this->where('kap_certificate', '1')->countAllResults(false);
+        
+        // Recent hires (last 30 days)
+        $stats['recent_hires'] = $this->where('hired_date >=', date('Y-m-d', strtotime('-30 days')))
+                                     ->countAllResults(false);
+
+        return $stats;
     }
 }

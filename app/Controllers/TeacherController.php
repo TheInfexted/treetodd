@@ -3,19 +3,17 @@
 namespace App\Controllers;
 
 use App\Models\TeacherModel;
-use App\Models\BranchModel;
 use CodeIgniter\RESTful\ResourceController;
+use CodeIgniter\I18n\Time;
 
 class TeacherController extends ResourceController
 {
     protected $teacherModel;
-    protected $branchModel;
     protected $session;
 
     public function __construct()
     {
         $this->teacherModel = new TeacherModel();
-        $this->branchModel = new BranchModel();
         $this->session = session();
     }
 
@@ -64,6 +62,7 @@ class TeacherController extends ResourceController
                 'branch_id' => $input['branch_id'] ?? ''
             ];
 
+            // Use model method 
             $result = $this->teacherModel->getTeachersWithPagination($params);
 
             // Format data for DataTables
@@ -74,55 +73,66 @@ class TeacherController extends ResourceController
                     : '<span class="badge bg-secondary">No</span>';
 
                 $actions = '
-                    <button class="btn btn-sm btn-primary" onclick="viewTeacher(' . $row['teacher_id'] . ')">
+                    <button class="btn btn-sm btn-light-primary" onclick="viewTeacher(' . $row['teacher_id'] . ')">
                         <i class="ph-bold ph-eye me-1"></i>
                     </button>';
 
+                // Status buttons 
                 switch ($row['status']) {
                     case '1': // Active
                         $statusButtons = '
-                            <div class="d-flex justify-content-center align-items-center">
-                                <button class="btn btn-sm btn-success me-1" 
-                                    title="Set Inactive" 
-                                    onclick="changeTeacherStatus(' . $row['teacher_id'] . ', \'2\')">
-                                    <i class="ph-bold ph-check"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" 
-                                    title="Terminate" 
-                                    onclick="changeTeacherStatus(' . $row['teacher_id'] . ', \'3\')">
-                                    <i class="ph-bold ph-x"></i>
-                                </button>
+                            <div class="text-left">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button class="btn btn-success" 
+                                        title="Set Inactive" 
+                                        onclick="changeTeacherStatus(' . $row['teacher_id'] . ', \'2\')">
+                                        <i class="ph-bold ph-check"></i>
+                                    </button>
+                                    <button class="btn btn-danger" 
+                                        title="Terminate" 
+                                        onclick="changeTeacherStatus(' . $row['teacher_id'] . ', \'3\')">
+                                        <i class="ph-bold ph-x"></i>
+                                    </button>
+                                </div>
                             </div>';
                         break;
 
                     case '2': // Inactive
                         $statusButtons = '
-                            <div class="d-flex justify-content-center align-items-center">
-                                <button class="btn btn-sm btn-warning me-1" 
-                                    title="Set Active" 
-                                    onclick="changeTeacherStatus(' . $row['teacher_id'] . ', \'1\')">
-                                    <i class="ph-bold ph-pause"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" 
-                                    title="Terminate" 
-                                    onclick="changeTeacherStatus(' . $row['teacher_id'] . ', \'3\')">
-                                    <i class="ph-bold ph-x"></i>
-                                </button>
+                            <div class="text-left">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button class="btn btn-warning" 
+                                        title="Set Active" 
+                                        onclick="changeTeacherStatus(' . $row['teacher_id'] . ', \'1\')">
+                                        <i class="ph-bold ph-pause"></i>
+                                    </button>
+                                    <button class="btn btn-danger" 
+                                        title="Terminate" 
+                                        onclick="changeTeacherStatus(' . $row['teacher_id'] . ', \'3\')">
+                                        <i class="ph-bold ph-x"></i>
+                                    </button>
+                                </div>
                             </div>';
                         break;
 
                     case '3': // Terminated
                     default:
-                        $statusButtons = '<span class="badge bg-danger">Terminated</span>';
+                        $statusButtons = '
+                            <div class="text-left">
+                                <span class="badge bg-danger fs-8 px-2 py-2">Terminated</span>
+                            </div>';
                         break;
                 }
+
+                // Use Time class for better date formatting 
+                $hiredDate = Time::parse($row['hired_date'])->toLocalizedString('MMM dd, yyyy');
 
                 $formattedData[] = [
                     $row['teacher_name'],
                     $row['age'],
                     $row['highest_qualification'],
                     $kapBadge,
-                    date('M d, Y', strtotime($row['hired_date'])),
+                    $hiredDate,
                     $row['phone_number'],
                     $row['branch_name'] ?? 'N/A',
                     $statusButtons,
@@ -146,7 +156,7 @@ class TeacherController extends ResourceController
     }
 
     /**
-     * Add new teacher
+     * Add new teacher 
      */
     public function addNewTeacher()
     {
@@ -180,7 +190,7 @@ class TeacherController extends ResourceController
                 ]);
             }
 
-            // Check if ID number already exists
+            // Check duplicates using model methods
             if ($this->teacherModel->isIdNumberExists($this->request->getPost('id_number'))) {
                 return $this->response->setJSON([
                     'code' => 0,
@@ -204,17 +214,10 @@ class TeacherController extends ResourceController
             ];
 
             $loginData = null;
-            if ($this->request->getPost('create_login') === '1') {
-                $username = $this->request->getPost('username');
-                $password = $this->request->getPost('password');
-
-                if (empty($username) || empty($password)) {
-                    return $this->response->setJSON([
-                        'code' => 0,
-                        'message' => 'Username and password are required for login account'
-                    ]);
-                }
-
+            $username = $this->request->getPost('username');
+            $password = $this->request->getPost('password');
+            
+            if (!empty($username) && !empty($password)) {
                 if ($this->teacherModel->isUsernameExists($username)) {
                     return $this->response->setJSON([
                         'code' => 0,
@@ -234,6 +237,7 @@ class TeacherController extends ResourceController
                 ];
             }
 
+            // Use model method for creation
             $teacherId = $this->teacherModel->createTeacherWithAccount($teacherData, $loginData);
 
             return $this->response->setJSON([
@@ -251,7 +255,7 @@ class TeacherController extends ResourceController
     }
 
     /**
-     * Get teacher details for editing
+     * Get teacher details 
      */
     public function getTeacherDetails($teacherId)
     {
@@ -321,7 +325,7 @@ class TeacherController extends ResourceController
                 ]);
             }
 
-            // Check if ID number already exists (exclude current teacher)
+            // Check ID number uniqueness
             if ($this->teacherModel->isIdNumberExists($this->request->getPost('id_number'), $teacherId)) {
                 return $this->response->setJSON([
                     'code' => 0,
@@ -329,6 +333,7 @@ class TeacherController extends ResourceController
                 ]);
             }
 
+            // FIXED: Include status and modified_date
             $teacherData = [
                 'teacher_name' => $this->request->getPost('teacher_name'),
                 'age' => $this->request->getPost('age'),
@@ -338,20 +343,14 @@ class TeacherController extends ResourceController
                 'id_number' => $this->request->getPost('id_number'),
                 'phone_number' => $this->request->getPost('phone_number'),
                 'address' => $this->request->getPost('address'),
-                'status' => $this->request->getPost('status') ?: '1'
+                'status' => $this->request->getPost('status') ?: '1', 
+                'modified_date' => date('Y-m-d H:i:s') 
             ];
 
             $loginData = null;
-            if ($this->request->getPost('update_login') === '1') {
-                $username = $this->request->getPost('username');
-                
-                if (empty($username)) {
-                    return $this->response->setJSON([
-                        'code' => 0,
-                        'message' => 'Username is required for login account'
-                    ]);
-                }
-
+            $username = $this->request->getPost('username');
+            
+            if (!empty($username)) {
                 if ($this->teacherModel->isUsernameExists($username, $teacherId)) {
                     return $this->response->setJSON([
                         'code' => 0,
@@ -363,69 +362,30 @@ class TeacherController extends ResourceController
                     'branch_username' => $username,
                     'branch_childcare' => $this->request->getPost('branch_childcare') ?: '2',
                     'branch_name' => $teacherData['teacher_name'],
-                    'branch_status' => $this->request->getPost('login_status') ?: '1'
+                    'branch_status' => $this->request->getPost('login_status') ?: '1',
+                    'modified_date' => date('Y-m-d H:i:s') 
                 ];
 
-                // Add password if provided
                 $password = $this->request->getPost('password');
                 if (!empty($password)) {
                     $loginData['branch_password'] = password_hash($password, PASSWORD_DEFAULT);
                 }
             }
 
-            $this->teacherModel->updateTeacherWithAccount($teacherId, $teacherData, $loginData);
+            // Use model method for update
+            $result = $this->teacherModel->updateTeacherWithAccount($teacherId, $teacherData, $loginData);
 
-            return $this->response->setJSON([
-                'code' => 1,
-                'message' => 'Teacher updated successfully'
-            ]);
-
-        } catch (\Exception $e) {
-            return $this->response->setJSON([
-                'code' => 0,
-                'message' => 'Error: ' . $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
-     * Delete teacher
-     */
-    public function deleteTeacher()
-    {
-        if (!$this->session->get('isLoggedIn')) {
-            return $this->response->setJSON([
-                'code' => 69,
-                'message' => 'Session expired'
-            ]);
-        }
-
-        try {
-            $teacherId = $this->request->getPost('teacher_id');
-            
-            if (empty($teacherId)) {
+            if ($result) {
+                return $this->response->setJSON([
+                    'code' => 1,
+                    'message' => 'Teacher updated successfully'
+                ]);
+            } else {
                 return $this->response->setJSON([
                     'code' => 0,
-                    'message' => 'Teacher ID is required'
+                    'message' => 'Failed to update teacher'
                 ]);
             }
-
-            // Check if teacher exists
-            $teacher = $this->teacherModel->find($teacherId);
-            if (!$teacher) {
-                return $this->response->setJSON([
-                    'code' => 0,
-                    'message' => 'Teacher not found'
-                ]);
-            }
-
-            // Delete teacher (will cascade delete login account due to foreign key)
-            $this->teacherModel->delete($teacherId);
-
-            return $this->response->setJSON([
-                'code' => 1,
-                'message' => 'Teacher deleted successfully'
-            ]);
 
         } catch (\Exception $e) {
             return $this->response->setJSON([
@@ -458,7 +418,6 @@ class TeacherController extends ResourceController
                 ]);
             }
 
-            // Validate status value
             if (!in_array($newStatus, ['1', '2', '3'])) {
                 return $this->response->setJSON([
                     'code' => 0,
@@ -466,7 +425,6 @@ class TeacherController extends ResourceController
                 ]);
             }
 
-            // Check if teacher exists
             $teacher = $this->teacherModel->find($teacherId);
             if (!$teacher) {
                 return $this->response->setJSON([
@@ -475,8 +433,11 @@ class TeacherController extends ResourceController
                 ]);
             }
 
-            // Update teacher status
-            $this->teacherModel->update($teacherId, ['status' => $newStatus]);
+            // Update with modified date
+            $this->teacherModel->update($teacherId, [
+                'status' => $newStatus,
+                'modified_date' => date('Y-m-d H:i:s')
+            ]);
 
             $statusText = match($newStatus) {
                 '1' => 'Active',
@@ -488,6 +449,51 @@ class TeacherController extends ResourceController
             return $this->response->setJSON([
                 'code' => 1,
                 'message' => "Teacher status changed to {$statusText} successfully"
+            ]);
+
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'code' => 0,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Delete teacher 
+     */
+    public function deleteTeacher()
+    {
+        if (!$this->session->get('isLoggedIn')) {
+            return $this->response->setJSON([
+                'code' => 69,
+                'message' => 'Session expired'
+            ]);
+        }
+
+        try {
+            $teacherId = $this->request->getPost('teacher_id');
+            
+            if (empty($teacherId)) {
+                return $this->response->setJSON([
+                    'code' => 0,
+                    'message' => 'Teacher ID is required'
+                ]);
+            }
+
+            $teacher = $this->teacherModel->find($teacherId);
+            if (!$teacher) {
+                return $this->response->setJSON([
+                    'code' => 0,
+                    'message' => 'Teacher not found'
+                ]);
+            }
+
+            $this->teacherModel->delete($teacherId);
+
+            return $this->response->setJSON([
+                'code' => 1,
+                'message' => 'Teacher deleted successfully'
             ]);
 
         } catch (\Exception $e) {
@@ -522,5 +528,34 @@ class TeacherController extends ResourceController
         echo view('teacher/view', $data);
         echo view('template/footer');
         echo view('template/end', $data);
+    }
+
+    /**
+     * Get teacher statistics
+     */
+    public function getStats()
+    {
+        if (!$this->session->get('isLoggedIn')) {
+            return $this->response->setJSON([
+                'code' => 69,
+                'message' => 'Session expired'
+            ]);
+        }
+
+        try {
+            $stats = $this->teacherModel->getTeacherStats();
+            
+            return $this->response->setJSON([
+                'code' => 1,
+                'message' => 'Success',
+                'data' => $stats
+            ]);
+
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'code' => 0,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
     }
 }

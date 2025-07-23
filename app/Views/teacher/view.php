@@ -8,7 +8,7 @@
                     <h4 class="main-title mb-0"><?= $teacher['teacher_name']; ?></h4>
                     <div>
                         <a href="<?= base_url('teachers'); ?>" class="btn btn-outline-secondary me-2">
-                            <i class="ph-bold ph-arrow-left me-1"></i>Back to List
+                            <i class="ph-bold ph-arrow-left me-1"></i><?= lang('Nav.back_to_list'); ?>
                         </a>
                         <button type="button" class="btn btn-primary" onclick="editTeacher(<?= $teacher['teacher_id']; ?>)">
                             <i class="ti ti-edit"></i>
@@ -25,28 +25,28 @@
             <div class="col-lg-8">
                 <div class="card">
                     <div class="card-header">
-                        <h5><i class="ph-duotone ph-user-circle me-2"></i>Teacher Information</h5>
+                        <h5><i class="ph-duotone ph-user-circle me-2"></i><?= lang('Label.teacher_information'); ?></h5>
                     </div>
                     <div class="card-body">
                         <div class="row g-4">
                             <!-- Personal Information -->
                             <div class="col-12">
-                                <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">Personal Information</h6>
+                                <h6 class="fw-bold text-primary border-bottom pb-2 mb-3"><?= lang('Label.personal_information'); ?></h6>
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="form-label fw-medium text-muted">Full Name</label>
+                                        <label class="form-label fw-medium text-muted"><?= lang('Input.full_name'); ?></label>
                                         <p class="fw-semibold"><?= $teacher['teacher_name']; ?></p>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-medium text-muted">Age</label>
-                                        <p class="fw-semibold"><?= $teacher['age']; ?> years old</p>
+                                        <label class="form-label fw-medium text-muted"><?= lang('Input.age'); ?></label>
+                                        <p class="fw-semibold"><?= $teacher['age']; ?> <?= lang('Label.years_old'); ?></p>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-medium text-muted">ID Number</label>
+                                        <label class="form-label fw-medium text-muted"><?= lang('Input.id_number'); ?></label>
                                         <p class="fw-semibold"><?= $teacher['id_number']; ?></p>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-medium text-muted">Phone Number</label>
+                                        <label class="form-label fw-medium text-muted"><?= lang('Input.phone_number'); ?></label>
                                         <p class="fw-semibold">
                                             <a href="tel:<?= $teacher['phone_number']; ?>" class="text-decoration-none">
                                                 <i class="ph-bold ph-phone me-1"></i><?= $teacher['phone_number']; ?>
@@ -54,7 +54,7 @@
                                         </p>
                                     </div>
                                     <div class="col-12">
-                                        <label class="form-label fw-medium text-muted">Address</label>
+                                        <label class="form-label fw-medium text-muted"><?= lang('Input.address'); ?></label>
                                         <p class="fw-semibold"><?= nl2br($teacher['address']); ?></p>
                                     </div>
                                 </div>
@@ -62,37 +62,37 @@
 
                             <!-- Professional Information -->
                             <div class="col-12">
-                                <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">Professional Information</h6>
+                                <h6 class="fw-bold text-primary border-bottom pb-2 mb-3"><?= lang('Label.professional_information'); ?></h6>
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="form-label fw-medium text-muted">Highest Qualification</label>
+                                        <label class="form-label fw-medium text-muted"><?= lang('Input.highest_qualification'); ?></label>
                                         <p class="fw-semibold"><?= $teacher['highest_qualification']; ?></p>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-medium text-muted">KAP Certificate</label>
+                                        <label class="form-label fw-medium text-muted"><?= lang('Input.kap_certificate'); ?></label>
                                         <p class="fw-semibold">
                                             <?php if ($teacher['kap_certificate'] === '1'): ?>
-                                                <span class="badge bg-success"><i class="ph-bold ph-check me-1"></i>Yes</span>
+                                                <span class="badge bg-success"><i class="ph-bold ph-check me-1"></i><?= lang('Input.yes'); ?></span>
                                             <?php else: ?>
-                                                <span class="badge bg-secondary"><i class="ph-bold ph-x me-1"></i>No</span>
+                                                <span class="badge bg-secondary"><i class="ph-bold ph-x me-1"></i><?= lang('Input.no'); ?></span>
                                             <?php endif; ?>
                                         </p>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-medium text-muted">Hired Date</label>
+                                        <label class="form-label fw-medium text-muted"><?= lang('Input.hired_date'); ?></label>
                                         <p class="fw-semibold">
                                             <i class="ph-bold ph-calendar me-1"></i>
                                             <?= date('F d, Y', strtotime($teacher['hired_date'])); ?>
                                         </p>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-medium text-muted">Years of Service</label>
+                                        <label class="form-label fw-medium text-muted"><?= lang('Input.years_of_service'); ?></label>
                                         <p class="fw-semibold">
                                             <?php
                                             $hiredDate = new DateTime($teacher['hired_date']);
                                             $currentDate = new DateTime();
                                             $interval = $hiredDate->diff($currentDate);
-                                            echo $interval->y . ' years, ' . $interval->m . ' months';
+                                            echo $interval->y . ' ' . lang('Label.years') . ', ' . $interval->m . ' ' . lang('Label.months');
                                             ?>
                                         </p>
                                     </div>
@@ -101,18 +101,18 @@
 
                             <!-- Assignment Information -->
                             <div class="col-12">
-                                <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">Assignment Information</h6>
+                                <h6 class="fw-bold text-primary border-bottom pb-2 mb-3"><?= lang('Label.assignment_information'); ?></h6>
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="form-label fw-medium text-muted">Kindergarden</label>
+                                        <label class="form-label fw-medium text-muted"><?= lang('Input.kindergarden'); ?></label>
                                         <p class="fw-semibold"><?= $teacher['kindergarden_name']; ?></p>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-medium text-muted">Branch</label>
+                                        <label class="form-label fw-medium text-muted"><?= lang('Input.branch'); ?></label>
                                         <p class="fw-semibold"><?= $teacher['branch_name']; ?></p>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-medium text-muted">Manager</label>
+                                        <label class="form-label fw-medium text-muted"><?= lang('Input.manager'); ?></label>
                                         <p class="fw-semibold"><?= $teacher['manager_name']; ?></p>
                                     </div>
                                 </div>
@@ -127,11 +127,11 @@
                 <!-- Status Card -->
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5><i class="ph-duotone ph-info me-2"></i>Status Information</h5>
+                        <h5><i class="ph-duotone ph-info me-2"></i><?= lang('Label.status_information'); ?></h5>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="form-label fw-medium text-muted">Current Status</label>
+                            <label class="form-label fw-medium text-muted"><?= lang('Input.current_status'); ?></label>
                             <p class="fw-semibold">
                                 <?php
                                 $statusClass = match($teacher['status']) {
@@ -141,9 +141,9 @@
                                     default => 'bg-secondary'
                                 };
                                 $statusText = match($teacher['status']) {
-                                    '1' => 'Active',
-                                    '2' => 'Inactive',
-                                    '3' => 'Terminated',
+                                    '1' => lang('Input.active'),
+                                    '2' => lang('Input.inactive'),
+                                    '3' => lang('Input.terminated'),
                                     default => 'Unknown'
                                 };
                                 ?>
@@ -152,7 +152,7 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label fw-medium text-muted">Created Date</label>
+                            <label class="form-label fw-medium text-muted"><?= lang('Input.create_date'); ?></label>
                             <p class="fw-semibold">
                                 <i class="ph-bold ph-clock me-1"></i>
                                 <?= date('M d, Y \a\t g:i A', strtotime($teacher['created_date'])); ?>
@@ -161,7 +161,7 @@
 
                         <?php if ($teacher['modified_date']): ?>
                         <div class="mb-3">
-                            <label class="form-label fw-medium text-muted">Last Modified</label>
+                            <label class="form-label fw-medium text-muted"><?= lang('Input.modified_date'); ?></label>
                             <p class="fw-semibold">
                                 <i class="ph-bold ph-clock me-1"></i>
                                 <?= date('M d, Y \a\t g:i A', strtotime($teacher['modified_date'])); ?>
@@ -174,44 +174,44 @@
                 <!-- Login Account Card -->
                 <div class="card">
                     <div class="card-header">
-                        <h5><i class="ph-duotone ph-user-gear me-2"></i>Login Account</h5>
+                        <h5><i class="ph-duotone ph-user-gear me-2"></i><?= lang('Input.login_account'); ?></h5>
                     </div>
                     <div class="card-body">
                         <?php if ($teacher['branch_username']): ?>
                             <div class="mb-3">
-                                <label class="form-label fw-medium text-muted">Username</label>
+                                <label class="form-label fw-medium text-muted"><?= lang('Input.username'); ?></label>
                                 <p class="fw-semibold">
                                     <i class="ph-bold ph-user me-1"></i><?= $teacher['branch_username']; ?>
                                 </p>
                             </div>
                             
                             <div class="mb-3">
-                                <label class="form-label fw-medium text-muted">Login Status</label>
+                                <label class="form-label fw-medium text-muted"><?= lang('Input.login_status'); ?></label>
                                 <p class="fw-semibold">
                                     <?php
                                     $loginStatusClass = $teacher['login_status'] === '1' ? 'bg-success' : 'bg-danger';
-                                    $loginStatusText = $teacher['login_status'] === '1' ? 'Active' : 'Inactive';
+                                    $loginStatusText = $teacher['login_status'] === '1' ? lang('Input.active') : lang('Input.inactive');
                                     ?>
                                     <span class="badge <?= $loginStatusClass; ?>"><?= $loginStatusText; ?></span>
                                 </p>
                             </div>
                             
                             <div class="mb-3">
-                                <label class="form-label fw-medium text-muted">Child Care Access</label>
+                                <label class="form-label fw-medium text-muted"><?= lang('Input.child_care_access'); ?></label>
                                 <p class="fw-semibold">
                                     <?php if (($teacher['branch_childcare'] ?? '2') === '1'): ?>
-                                        <span class="badge bg-primary"><i class="ph-bold ph-check me-1"></i>Enabled</span>
+                                        <span class="badge bg-primary"><i class="ph-bold ph-check me-1"></i><?= lang('Label.enabled'); ?></span>
                                     <?php else: ?>
-                                        <span class="badge bg-secondary"><i class="ph-bold ph-x me-1"></i>Disabled</span>
+                                        <span class="badge bg-secondary"><i class="ph-bold ph-x me-1"></i><?= lang('Label.disabled'); ?></span>
                                     <?php endif; ?>
                                 </p>
                             </div>
                         <?php else: ?>
                             <div class="text-center py-4">
                                 <i class="ph-duotone ph-user-x text-muted" style="font-size: 3rem;"></i>
-                                <p class="text-muted mt-2">No login account created</p>
+                                <p class="text-muted mt-2"><?= lang('Label.no_login_account'); ?></p>
                                 <button type="button" class="btn btn-outline-primary btn-sm" onclick="createLoginAccount(<?= $teacher['teacher_id']; ?>)">
-                                    <i class="ph-bold ph-plus me-1"></i>Create Account
+                                    <i class="ph-bold ph-plus me-1"></i><?= lang('Label.create_account'); ?>
                                 </button>
                             </div>
                         <?php endif; ?>
@@ -230,7 +230,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editTeacherModalLabel">
-                    <i class="ti ti-edit text-success"></i> Edit Teacher
+                    <i class="ti ti-edit text-success"></i> <?= lang('Nav.edit_teacher'); ?>
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -240,74 +240,74 @@
                 <div class="row g-3">
                     <!-- Personal Information -->
                     <div class="col-12">
-                        <h6 class="fw-bold text-primary mb-3">Personal Information</h6>
+                        <h6 class="fw-bold text-primary mb-3"><?= lang('Label.personal_information'); ?></h6>
                     </div>
                     
                     <div class="col-md-6">
-                        <label class="form-label">Teacher Name <span class="text-danger">*</span></label>
+                        <label class="form-label"><?= lang('Input.teacher_name'); ?> <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="teacher_name" id="edit_teacher_name" required>
                     </div>
                     
                     <div class="col-md-6">
-                        <label class="form-label">Age <span class="text-danger">*</span></label>
+                        <label class="form-label"><?= lang('Input.age'); ?> <span class="text-danger">*</span></label>
                         <input type="number" class="form-control" name="age" id="edit_age" min="18" max="99" required>
                     </div>
                     
                     <div class="col-md-6">
-                        <label class="form-label">ID Number (IC/Passport) <span class="text-danger">*</span></label>
+                        <label class="form-label"><?= lang('Input.id_number'); ?> <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="id_number" id="edit_id_number" required>
                     </div>
                     
                     <div class="col-md-6">
-                        <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+                        <label class="form-label"><?= lang('Input.phone_number'); ?> <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="phone_number" id="edit_phone_number" required>
                     </div>
                     
                     <div class="col-12">
-                        <label class="form-label">Address <span class="text-danger">*</span></label>
+                        <label class="form-label"><?= lang('Input.address'); ?> <span class="text-danger">*</span></label>
                         <textarea class="form-control" name="address" id="edit_address" rows="3" required></textarea>
                     </div>
 
                     <!-- Professional Information -->
                     <div class="col-12">
                         <hr class="my-4">
-                        <h6 class="fw-bold text-primary mb-3">Professional Information</h6>
+                        <h6 class="fw-bold text-primary mb-3"><?= lang('Label.professional_information'); ?></h6>
                     </div>
                     
                     <div class="col-md-6">
-                        <label class="form-label">Highest Qualification <span class="text-danger">*</span></label>
+                        <label class="form-label"><?= lang('Input.highest_qualification'); ?> <span class="text-danger">*</span></label>
                         <select class="form-select" name="highest_qualification" id="edit_highest_qualification" required>
-                            <option value="" disabled="disabled">-- select one --</option>
-                            <option value="No formal education">No formal education</option>
-                            <option value="Primary education">Primary education</option>
-                            <option value="Secondary education">Secondary education or high school</option>
-                            <option value="GED">GED</option>
-                            <option value="Vocational qualification">Vocational qualification</option>
-                            <option value="Bachelor's degree">Bachelor's degree</option>
-                            <option value="Master's degree">Master's degree</option>
-                            <option value="Doctorate or higher">Doctorate or higher</option>
+                            <option value="" disabled="disabled"><?= lang('Input.select_one'); ?></option>
+                            <option value="No formal education"><?= lang('Input.no_formal_education'); ?></option>
+                            <option value="Primary education"><?= lang('Input.primary_education'); ?></option>
+                            <option value="Secondary education"><?= lang('Input.secondary_education'); ?></option>
+                            <option value="GED"><?= lang('Input.ged'); ?></option>
+                            <option value="Vocational qualification"><?= lang('Input.vocational_qualification'); ?></option>
+                            <option value="Bachelor's degree"><?= lang('Input.bachelors_degree'); ?></option>
+                            <option value="Master's degree"><?= lang('Input.masters_degree'); ?></option>
+                            <option value="Doctorate or higher"><?= lang('Input.doctorate_or_higher'); ?></option>
                         </select>
                     </div>
                     
                     <div class="col-md-6">
-                        <label class="form-label">KAP Certificate</label>
+                        <label class="form-label"><?= lang('Input.kap_certificate'); ?></label>
                         <select class="form-select" name="kap_certificate" id="edit_kap_certificate">
-                            <option value="2">No</option>
-                            <option value="1">Yes</option>
+                            <option value="2"><?= lang('Input.no'); ?></option>
+                            <option value="1"><?= lang('Input.yes'); ?></option>
                         </select>
                     </div>
                     
                     <div class="col-md-6">
-                        <label class="form-label">Hired Date <span class="text-danger">*</span></label>
+                        <label class="form-label"><?= lang('Input.hired_date'); ?> <span class="text-danger">*</span></label>
                         <input type="date" class="form-control" name="hired_date" id="edit_hired_date" required>
                     </div>
                     
                     <div class="col-md-6">
-                        <label class="form-label">Status</label>
+                        <label class="form-label"><?= lang('Input.status'); ?></label>
                         <select class="form-select" name="status" id="edit_status">
-                            <option value="1">Active</option>
-                            <option value="2">Inactive</option>
-                            <option value="3">Terminated</option>
+                            <option value="1"><?= lang('Input.active'); ?></option>
+                            <option value="2"><?= lang('Input.inactive'); ?></option>
+                            <option value="3"><?= lang('Input.terminated'); ?></option>
                         </select>
                     </div>
 
@@ -317,7 +317,7 @@
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="update_login" value="1" id="updateLoginCheck">
                             <label class="form-check-label fw-bold text-primary" for="updateLoginCheck">
-                                Update Login Account
+                                <?= lang('Label.update_login_account'); ?>
                             </label>
                         </div>
                     </div>
@@ -325,28 +325,28 @@
                     <div id="editLoginFields" style="display: none;">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Username</label>
+                                <label class="form-label"><?= lang('Input.username'); ?></label>
                                 <input type="text" class="form-control" name="username" id="edit_username">
                             </div>
                             
                             <div class="col-md-6">
-                                <label class="form-label">New Password (Leave blank to keep current)</label>
+                                <label class="form-label"><?= lang('Input.new_password'); ?></label>
                                 <input type="password" class="form-control" name="password" id="edit_password">
                             </div>
                             
                             <div class="col-md-6">
-                                <label class="form-label">Child Care Access</label>
+                                <label class="form-label"><?= lang('Input.child_care_access'); ?></label>
                                 <select class="form-select" name="branch_childcare" id="edit_branch_childcare">
-                                    <option value="2">No</option>
-                                    <option value="1">Yes</option>
+                                    <option value="2"><?= lang('Input.no'); ?></option>
+                                    <option value="1"><?= lang('Input.yes'); ?></option>
                                 </select>
                             </div>
                             
                             <div class="col-md-6">
-                                <label class="form-label">Login Status</label>
+                                <label class="form-label"><?= lang('Input.login_status'); ?></label>
                                 <select class="form-select" name="login_status" id="edit_login_status">
-                                    <option value="1">Active</option>
-                                    <option value="2">Inactive</option>
+                                    <option value="1"><?= lang('Input.active'); ?></option>
+                                    <option value="2"><?= lang('Input.inactive'); ?></option>
                                 </select>
                             </div>
                         </div>
@@ -354,9 +354,9 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= lang('Nav.cancel'); ?></button>
                 <button type="submit" class="btn btn-primary">
-                    <i class="ph-bold ph-check me-1"></i>Update Teacher
+                    <i class="ph-bold ph-check me-1"></i><?= lang('Nav.update'); ?>
                 </button>
             </div>
             </form>
@@ -389,7 +389,7 @@ document.addEventListener('DOMContentLoaded', function() {
             success: function(response) {
                 if (response.code === 1) {
                     Swal.fire({
-                        title: 'Success!',
+                        title: '<?= lang("Label.success"); ?>!',
                         text: response.message,
                         icon: 'success'
                     }).then(() => {
@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 } else {
                     Swal.fire({
-                        title: 'Error!',
+                        title: '<?= lang("Label.error"); ?>!',
                         text: response.message,
                         icon: 'error'
                     });
@@ -406,8 +406,8 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             error: function() {
                 Swal.fire({
-                    title: 'Error!',
-                    text: 'Something went wrong. Please try again.',
+                    title: '<?= lang("Label.error"); ?>!',
+                    text: '<?= lang("Label.something_went_wrong"); ?>',
                     icon: 'error'
                 });
             }
@@ -446,7 +446,7 @@ function editTeacher(teacherId) {
                 $('#modal-editTeacher').modal('show');
             } else {
                 Swal.fire({
-                    title: 'Error!',
+                    title: '<?= lang("Label.error"); ?>!',
                     text: response.message,
                     icon: 'error'
                 });
@@ -454,8 +454,8 @@ function editTeacher(teacherId) {
         },
         error: function() {
             Swal.fire({
-                title: 'Error!',
-                text: 'Failed to load teacher details.',
+                title: '<?= lang("Label.error"); ?>!',
+                text: '<?= lang("Label.failed_to_load"); ?>',
                 icon: 'error'
             });
         }

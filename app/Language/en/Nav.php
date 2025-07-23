@@ -12,9 +12,18 @@ return [
     'classroom' => 'Classroom',
     'filter' => 'Filter',
     'search' => 'Search',
+    
+    // Teacher-specific navigation
+    'teachers' => 'Teachers',
     'add_teacher' => 'Add Teacher',
     'edit_teacher' => 'Edit Teacher',
-    'view_teacher' => 'View Teacher',
-    'teacher_details' => 'Teacher Details',
     'teacher_list' => 'Teachers List',
+    'back_to_list' => 'Back to List',
+    
+    // Common actions
+    'cancel' => 'Cancel',
+    'update' => 'Update',
+    'delete' => 'Delete',
+    'view' => 'View',
+    'actions' => 'Actions',
 ];
