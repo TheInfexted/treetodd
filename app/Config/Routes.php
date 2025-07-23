@@ -24,13 +24,12 @@ $routes->get('user-logout', 'AuthControl::userLogOut');
 // End Auth
 
 // Teacher
-$routes->get('teachers', 'TeacherController::index', ['filter' => 'auth']);
+$routes->resource('teachers', ['controller' => 'TeacherController','filter' => 'auth']);
 $routes->get('teacher/view/(:num)', 'TeacherController::view/$1', ['filter' => 'auth']);
-$routes->post('teacher/list-teachers', 'TeacherController::teacherListWithPagination', ['filter' => 'auth']);
+$routes->post('list-teachers', 'TeacherController::teacherListWithPagination', ['filter' => 'auth']);
 $routes->post('teacher/add-new', 'TeacherController::addNewTeacher', ['filter' => 'auth']);
 $routes->get('teacher/details/(:num)', 'TeacherController::getTeacherDetails/$1', ['filter' => 'auth']);
 $routes->post('teacher/update', 'TeacherController::updateTeacher', ['filter' => 'auth']);
-$routes->post('teacher/delete', 'TeacherController::deleteTeacher', ['filter' => 'auth']);
 $routes->post('teacher/change-status', 'TeacherController::updateTeacherStatus', ['filter' => 'auth']);
 // End Teacher
 

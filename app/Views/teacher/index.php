@@ -333,7 +333,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             });
 
             $.ajax({
-                url: '/teacher/list-teachers',
+                url: 'list-teachers',
                 type: 'post',
                 data: payload,
                 contentType: "application/json; charset=utf-8",
