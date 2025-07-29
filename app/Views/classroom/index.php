@@ -31,10 +31,10 @@
                         </menu>
 
                         <div class="collapse" id="collapseExample">
-                            <div class="card card-body shadow-none">
+                            <div class="card card-body px-0 shadow-none">
                                 <?=form_open('',['class'=>'row g-2 align-items-center filterForm','novalidate'=>'novalidate']);?>
                                 <div class="col-xl-auto col-lg-auto col-md-auto col-12">
-                                    <input type="text" class="form-control" placeholder="<?=lang('Input.clsrmname');?>" name="classroomName">
+                                    <input type="text" class="form-control" placeholder="<?=lang('Input.clsrmname');?>" name="classRoomName">
                                 </div>
                                 <div class="col-xl-auto col-lg-auto col-md-auto col-12">
                                     <select class="form-select" name="status">
@@ -63,7 +63,6 @@
                             <th><?=lang('Input.clsrmname');?></th>
                             <th><?=lang('Input.batchyrs');?></th>
                             <th><?=lang('Input.session');?></th>
-                            <th><?=lang('Input.status');?></th>
                             <th><?=lang('Input.totalchild');?></th>
                             <th><?=lang('Input.totalteacher');?></th>
                             <th><?=lang('Input.createdate');?></th>
@@ -101,24 +100,24 @@
                 </div>
                 <div class="mb-3">
                     <label for="userName" class="form-label"><?=lang('Input.batchyrs');?></label>
-                    <input type="date" class="form-control" name="batchYear" required>
-                    <span class="invalid-feedback text-danger">Invalid Classroom Name. Please enter at least 6 characters.</span>
+                    <input type="text" class="form-control" name="batchYear" required>
+                    <span class="invalid-feedback text-danger">Invalid Batch.</span>
                 </div>
                 <div class="mb-3">
                     <label for="userName" class="form-label"><?=lang('Input.session');?></label>
                     <div class="d-flex flex-wrap gap-2">
                         <label class="check-box">
-                            <input type="radio" class="form-check-input" name="session" value="Morning" checked required>
+                            <input type="radio" class="form-check-input" name="session" value="1" checked required>
                             <span class="radiomark light-primary ms-2"></span>
                             <span class="text-primary">Morning</span>
                         </label>
                         <label class="check-box">
-                            <input type="radio" class="form-check-input" name="session" value="Afternoon">
+                            <input type="radio" class="form-check-input" name="session" value="2">
                             <span class="radiomark light-primary ms-2"></span>
                             <span class="text-primary">Afternoon</span>
                         </label>
                         <label class="check-box">
-                            <input type="radio" class="form-check-input" name="session" value="Morning & Afternoon">
+                            <input type="radio" class="form-check-input" name="session" value="3">
                             <span class="radiomark light-primary ms-2"></span>
                             <span class="text-primary">Morning & Afternoon</span>
                         </label>
@@ -149,24 +148,60 @@
                 <h1 class="modal-title fs-5 text-white">Modify Classroom</h1>
                 <button type="button" class="border-0 bg-none text-white" data-bs-dismiss="modal" aria-label="Close"><i class="ti ti-x fs-3"></i></button>
             </div>
-            <div class="modal-body ">
-                <div class="row">
-                    <div class="col-lg-3 text-center align-self-center">
-                        <img src="../assets/images/modals/04.png" alt="" class="img-fluid b-r-10">
+            <?=form_open('',['id'=>'form-validation','class'=>'form-validation app-form modifyClassroomForm','novalidate'=>'novalidate'],['classRoomId'=>'']);?>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="userName" class="form-label"><?=lang('Input.clsrmname');?></label>
+                    <input type="text" class="form-control" pattern="^[a-zA-Z0-9]{6,}$" name="classRoomName" required>
+                    <span class="invalid-feedback text-danger">Invalid Classroom Name. Please enter at least 6 characters.</span>
+                </div>
+                <div class="mb-3">
+                    <label for="userName" class="form-label"><?=lang('Input.batchyrs');?></label>
+                    <input type="text" class="form-control" name="batchYear" required>
+                    <span class="invalid-feedback text-danger">Invalid Batch.</span>
+                </div>
+                <div class="mb-3">
+                    <label for="userName" class="form-label"><?=lang('Input.session');?></label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <label class="check-box">
+                            <input type="radio" class="form-check-input" name="session" id="session-1" value="1" checked required>
+                            <span class="radiomark light-primary ms-2"></span>
+                            <span class="text-primary">Morning</span>
+                        </label>
+                        <label class="check-box">
+                            <input type="radio" class="form-check-input" name="session" id="session-2" value="2">
+                            <span class="radiomark light-primary ms-2"></span>
+                            <span class="text-primary">Afternoon</span>
+                        </label>
+                        <label class="check-box">
+                            <input type="radio" class="form-check-input" name="session" id="session-3" value="3">
+                            <span class="radiomark light-primary ms-2"></span>
+                            <span class="text-primary">Morning & Afternoon</span>
+                        </label>
                     </div>
-                    <div class="col-lg-9 ps-4">
-                        <h5>Wed designer</h5>
-                        <ul class="mt-2 mb-0 list-disc">
-                        <li>Lorem ipsum dolor sit amet consectetur adipisicing elit.</li>
-                        </ul>
-                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><?=lang('Input.starttime');?></label>
+                    <input type="text" class="form-control date-time-picker" name="sessionStartTime" value="07:00">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><?=lang('Input.endtime');?></label>
+                    <input type="text" class="form-control date-time-picker" name="sessionEndTime" value="12:00">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><?=lang('Input.totalchild');?></label>
+                    <input type="number" min="0" class="form-control" name="totalChild" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><?=lang('Input.totalteacher');?></label>
+                    <input type="number" min="0" class="form-control" name="totalTeacher" required>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light-secondary"
-            data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-light-primary">Save changes</button>
+                <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary"><?=lang('Nav.submit');?></button>
             </div>
+            <?=form_close();?>
         </div>
     </div>
 </section>
@@ -222,13 +257,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 var pageindex = settings._iDisplayStart/settings._iDisplayLength + 1;
             }
 
-            const classroomName = $('.filterForm [name=classroomName]').val();
+            const classRoomName = $('.filterForm [name=classRoomName]').val();
             const status = $('.filterForm [name=status] option:selected').val();
             
             var payload = JSON.stringify({
                 pageindex: pageindex,
                 rowperpage: data.length,
-                classroomName: classroomName,
+                classRoomName: classRoomName,
                 status: status,
             });
 
@@ -327,6 +362,54 @@ document.addEventListener('DOMContentLoaded', (event) => {
         $('form').trigger('reset');
     });
     // End Add Classroom
+
+    // Modify Classroom
+    $('.modifyClassroomForm').on('submit', function(e) {
+        e.preventDefault();
+
+        if (this.checkValidity() !== false) {
+            generalLoading();
+
+            $('.modifyClassroomForm [type=submit]').prop('disabled', true);
+
+            var params = {};
+            var formObj = $(this).closest("form");
+            $.each($(formObj).serializeArray(), function (index, value) {
+                params[value.name] = value.value;
+            });
+
+            $.post('/classroom/modify', {
+                params
+            }, function(data, status) {
+                const obj = JSON.parse(data);
+                if( obj.code==1 ) {
+					swal.fire("", obj.message, "success").then(() => { 
+                        $('.modal-modifyClassroom').modal('hide');
+                        $('#classroomTable').DataTable().ajax.reload(null,false);
+                    });
+                } else {
+					swal.fire("", obj.message + " (Code: "+obj.code+")", "error").then(() => { 
+                        $('.modifyClassroomForm [type=submit]').prop('disabled', false);
+                    });
+                }
+            })
+            .done(function() {
+				$('.modifyClassroomForm [type=submit]').prop('disabled', false);
+            })
+            .fail(function() {
+                swal.fire("", "Sorry! Something wrong.", "error").then(() => {
+					$('.modifyClassroomForm [type=submit]').prop('disabled', false);
+                });
+            });
+        }
+    });
+
+    const modifyClassroomEvent = document.getElementById('modal-modifyClassroom');
+    modifyClassroomEvent.addEventListener('hidden.bs.modal', function (event) {
+        $('form').removeClass('was-validated');
+        $('form').trigger('reset');
+    });
+    // End Add Classroom
 });
 
 function editClassroomStatus(classRoomId,status)
@@ -362,8 +445,45 @@ function editClassroomStatus(classRoomId,status)
     });
 }
 
-function getClassroom(classroomId)
+function getClassroom(classRoomId)
 {
-    $('.modal-modifyClassroom').modal('toggle');
+    generalLoading();
+
+    var params = {};
+        params['classRoomId'] = classRoomId;
+
+    $.post('/get-classroom', {
+        params
+    }, function(data, status) {
+        const obj = JSON.parse(data);
+        if( obj.code==1 ) {
+            swal.close();
+            $('.modal-modifyClassroom').modal('toggle');
+            $('.modifyClassroomForm [name="classRoomId"]').val(obj.data.classroom_id);
+
+            $('.modifyClassroomForm [name="classRoomName"]').val(obj.data.classroom_name);
+            $('.modifyClassroomForm [name="batchYear"]').val(obj.data.batch_year);
+
+            $('.modifyClassroomForm [name="session"]#session-'+obj.data.session).prop('checked',true);
+            $('.modifyClassroomForm [name="sessionStartTime"]').val(obj.data.session_start);
+            $('.modifyClassroomForm [name="sessionEndTime"]').val(obj.data.session_end);
+
+            $('.modifyClassroomForm [name="totalChild"]').val(obj.data.total_child);
+            $('.modifyClassroomForm [name="totalTeacher"]').val(obj.data.total_teachers);
+        } else if( obj.code==69 ) {
+            swal.fire("", obj.message + " (Code: "+obj.code+")", "warning").then(() => {
+                userLogOut();
+            });
+        } else {
+            swal.fire("", obj.message + " (Code: "+obj.code+")", "error").then(() => { 
+            });
+        }
+    })
+    .done(function() {
+    })
+    .fail(function() {
+        swal.fire("", "Sorry! Something wrong.", "error").then(() => {
+        });
+    });
 }
 </script>

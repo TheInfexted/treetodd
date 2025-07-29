@@ -10,29 +10,23 @@ class General extends BaseController
 
     public function index_teacher()
     {
-        if (!session()->get('isLoggedIn')): return false; endif;
+        if (!$this->checkSession()): return false; endif;
         
         // Get branches and kindergartens from database
         $branches = $this->TeacherModel->selectBranches();
         $kindergartens = $this->TeacherModel->selectKindergartens();
 
-        $data = [
-            'session' => session()->get('isLoggedIn') ? true : false,
-            'pageName' => lang('Nav.teacher'),
+        $data = $this->prepareData(lang('Nav.teacher'), [
             'branches' => (isset($branches['data']) && is_array($branches['data'])) ? $branches['data'] : [],
             'kindergartens' => (isset($kindergartens['data']) && is_array($kindergartens['data'])) ? $kindergartens['data'] : [],
-        ];
+        ]);
 
-        echo view('template/start');
-        echo view('template/header');
-        echo view('teacher/index', $data);
-        echo view('template/footer');
-        echo view('template/end', $data);
+        $this->renderView('teacher/index', $data);
     }
 
     public function index_teacher_view($teacherId)
     {
-        if (!session()->get('isLoggedIn')): return false; endif;
+        if (!$this->checkSession()): return false; endif;
         
         $teacher = $this->TeacherModel->selectTeacherDetails(['teacher_id' => $teacherId]);
         
@@ -40,22 +34,16 @@ class General extends BaseController
             return redirect()->to('/teachers')->with('error', 'Teacher not found');
         }
 
-        $data = [
-            'session' => session()->get('isLoggedIn') ? true : false,
-            'pageName' => 'Teacher Details - ' . $teacher['data']['teacher_name'],
+        $data = $this->prepareData('Teacher Details - ' . $teacher['data']['teacher_name'], [
             'teacher' => $teacher['data']
-        ];
+        ]);
 
-        echo view('template/start');
-        echo view('template/header');
-        echo view('teacher/view', $data);
-        echo view('template/footer');
-        echo view('template/end', $data);
+        $this->renderView('teacher/view', $data);
     }
 
     public function index_teacher_edit($teacherId)
     {
-        if (!session()->get('isLoggedIn')): return false; endif;
+        if (!$this->checkSession()): return false; endif;
         
         $teacher = $this->TeacherModel->selectTeacherDetails(['teacher_id' => $teacherId]);
         $branches = $this->TeacherModel->selectBranches();
@@ -65,40 +53,28 @@ class General extends BaseController
             return redirect()->to('/teachers')->with('error', 'Teacher not found');
         }
 
-        $data = [
-            'session' => session()->get('isLoggedIn') ? true : false,
-            'pageName' => 'Edit Teacher - ' . $teacher['data']['teacher_name'],
+        $data = $this->prepareData('Edit Teacher - ' . $teacher['data']['teacher_name'], [
             'teacher' => $teacher['data'],
             'branches' => $branches['data'] ?? [],
             'kindergartens' => $kindergartens['data'] ?? [],
-        ];
+        ]);
 
-        echo view('template/start');
-        echo view('template/header');
-        echo view('teacher/edit', $data);
-        echo view('template/footer');
-        echo view('template/end', $data);
+        $this->renderView('teacher/edit', $data);
     }
 
     public function index_teacher_add()
     {
-        if (!session()->get('isLoggedIn')): return false; endif;
+        if (!$this->checkSession()): return false; endif;
         
         $branches = $this->TeacherModel->selectBranches();
         $kindergartens = $this->TeacherModel->selectKindergartens();
 
-        $data = [
-            'session' => session()->get('isLoggedIn') ? true : false,
-            'pageName' => 'Add New Teacher',
+        $data = $this->prepareData('Add New Teacher', [
             'branches' => $branches['data'] ?? [],
             'kindergartens' => $kindergartens['data'] ?? [],
-        ];
+        ]);
 
-        echo view('template/start');
-        echo view('template/header');
-        echo view('teacher/add', $data);
-        echo view('template/footer');
-        echo view('template/end', $data);
+        $this->renderView('teacher/add', $data);
     }
 
     /*
@@ -111,16 +87,10 @@ class General extends BaseController
 
     public function index_children()
     {
-        if( !session()->get('isLoggedIn') ): return false; endif;
-        $data['session'] = session()->get('isLoggedIn') ? true : false;
-
-        $data['pageName'] = lang('Nav.children');
-
-        echo view('template/start');
-        echo view('template/header');
-        echo view('children/index',$data);
-        echo view('template/footer');
-        echo view('template/end',$data);
+        if (!$this->checkSession()): return false; endif;
+        
+        $data = $this->prepareData(lang('Nav.children'));
+        $this->renderView('children/index', $data);
     }
 
     /*
@@ -133,16 +103,10 @@ class General extends BaseController
 
     public function index_classroom()
     {
-        if( !session()->get('isLoggedIn') ): return false; endif;
-        $data['session'] = session()->get('isLoggedIn') ? true : false;
-
-        $data['pageName'] = lang('Nav.classroom');
-
-        echo view('template/start');
-        echo view('template/header');
-        echo view('classroom/index',$data);
-        echo view('template/footer');
-        echo view('template/end',$data);
+        if (!$this->checkSession()): return false; endif;
+        
+        $data = $this->prepareData(lang('Nav.classroom'));
+        $this->renderView('classroom/index', $data);
     }
 
     /*
@@ -155,16 +119,10 @@ class General extends BaseController
 
     public function index_dashboard()
     {
-        if( !session()->get('isLoggedIn') ): return false; endif;
-        $data['session'] = session()->get('isLoggedIn') ? true : false;
-
-        $data['pageName'] = lang('Nav.dashboard');
-
-        echo view('template/start');
-        echo view('template/header');
-        echo view('dashboard',$data);
-        echo view('template/footer');
-        echo view('template/end',$data);
+        if (!$this->checkSession()): return false; endif;
+        
+        $data = $this->prepareData(lang('Nav.dashboard'));
+        $this->renderView('dashboard', $data);
     }
 
     /*
@@ -177,11 +135,10 @@ class General extends BaseController
 
     public function index()
     {
-        $data['session'] = session()->get('isLoggedIn') ? true : false;
-
+        $data = $this->prepareData('Login');
         echo view('template/start');
         echo view('index');
-        echo view('template/end',$data);
+        echo view('template/end', $data);
     }
 
     public function index_blank()
@@ -203,8 +160,6 @@ class General extends BaseController
 
     public function index_pageNotFound404()
     {
-        // $data['session'] = session()->get('isLoggedIn') ? true : false;
-        
         echo view('template/start');
         echo view('404');
         echo view('template/end');

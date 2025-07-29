@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 params[value.name] = value.value;
             });
 
-            $.post('<?= base_url("teacher/update"); ?>', {
+            $.post('<?= base_url("teacher/modify"); ?>', {
                 params: params
             }, function(data, status) {
                 const obj = typeof data === 'string' ? JSON.parse(data) : data;
@@ -417,7 +417,7 @@ function editTeacher(teacherId) {
     var params = {};
     params['teacherId'] = teacherId;
 
-    $.post('<?= base_url("teacher/get-details"); ?>', {
+    $.post('<?= base_url("get-teacher"); ?>', {
         params: params
     }, function(data, status) {
         const obj = typeof data === 'string' ? JSON.parse(data) : data;

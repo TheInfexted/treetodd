@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use CodeIgniter\I18n\Time;
-use Exception;
 
 class TeacherController extends BaseController
 {
@@ -34,42 +33,24 @@ class TeacherController extends BaseController
 
         $verifyLogged = $this->verifyLoggedUser();
         if( !$verifyLogged['timeout'] ):
-            try {
-                $params = $this->request->getpost('params');
-                
-                if (!$params || !isset($params['teacherId']) || !isset($params['status'])) {
-                    echo json_encode([
-                        'code' => 0,
-                        'message' => 'Missing required parameters'
-                    ]);
-                    return;
-                }
-                
-                $payload = [
-                    'teacher_id' => (int)$params['teacherId'],
-                    'status' => (int)$params['status'],
-                    'modified_date' => date('Y-m-d H:i:s'),
-                ];
-                
-                $res = $this->TeacherModel->updateTeacherStatus($payload);
-                
-                // Make sure we have a valid response
-                if (!is_array($res)) {
-                    echo json_encode([
-                        'code' => 0,
-                        'message' => 'Invalid model response'
-                    ]);
-                    return;
-                }
-                
-                echo json_encode($res);
-                
-            } catch (Exception $e) {
+            $params = $this->request->getpost('params');
+            
+            if (!$params || !isset($params['teacherId']) || !isset($params['status'])) {
                 echo json_encode([
                     'code' => 0,
-                    'message' => 'Controller error: ' . $e->getMessage()
+                    'message' => 'Missing required parameters'
                 ]);
+                return;
             }
+            
+            $payload = [
+                'teacher_id' => (int)$params['teacherId'],
+                'status' => (int)$params['status'],
+                'modified_date' => date('Y-m-d H:i:s'),
+            ];
+            
+            $res = $this->TeacherModel->updateTeacherStatus($payload);
+            echo json_encode($res);
         else:
             echo json_encode([
                 'code' => 69,

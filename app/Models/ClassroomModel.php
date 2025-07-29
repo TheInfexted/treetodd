@@ -1,7 +1,6 @@
 <?php namespace App\Models;
 
 use CodeIgniter\Model;
-use Exception;
 
 class ClassroomModel extends Model
 {
@@ -148,7 +147,7 @@ class ClassroomModel extends Model
         try {
             $builder = $this->db->table($this->table);
 
-            if( !empty($where['status']) && empty($where['classroomName']) ):
+            if( !empty($where['status']) && empty($where['classRoomName']) ):
                 $query = $builder->select('*')
                     ->set($where)
                     ->where('status', $where['status'])
@@ -161,17 +160,17 @@ class ClassroomModel extends Model
                     ->where('status', $where['status'])
                     ->countAllResults();
                 // End All
-            elseif( empty($where['status']) && !empty($where['classroomName']) ):
+            elseif( empty($where['status']) && !empty($where['classRoomName']) ):
                 $query = $builder->select('*')
                     ->set($where)
-                    ->like('classroom_name', $where['classroomName'], 'both')
+                    ->like('classroom_name', $where['classRoomName'], 'both')
                     ->limit($where['rowperpage'], $indexing)
                     ->orderBy('classroom_id DESC')
                     ->get()->getResultArray();
 
                 // All
                 $allRows = $builder->select('*')
-                    ->like('classroom_name', $where['classroomName'], 'both')
+                    ->like('classroom_name', $where['classRoomName'], 'both')
                     ->countAllResults();
                 // End All
             else:

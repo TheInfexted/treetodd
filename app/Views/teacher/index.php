@@ -413,7 +413,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             $.ajax({
-                url: 'list-teachers',
+                url: 'list-teacher',
                 type: 'post',
                 data: payload,
                 contentType: "application/json; charset=utf-8",

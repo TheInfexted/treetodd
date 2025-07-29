@@ -113,7 +113,7 @@ class ClassroomControl extends BaseController
             ]);
         endif;
     }
-    
+
     public function getClassroom()
     {
         if( !session()->get('isLoggedIn') ): return false; endif;
@@ -144,7 +144,7 @@ class ClassroomControl extends BaseController
             $payload = $this->ClassroomModel->selectAllClassroomsWithPagination([
                 'pageindex' => $raw['pageindex'],
                 'rowperpage' => $raw['rowperpage'],
-                'classroomName' => $raw['classroomName'],
+                'classRoomName' => $raw['classRoomName'],
                 'status' => (int)$raw['status'],
             ]);
             // echo json_encode($payload);
@@ -181,7 +181,6 @@ class ClassroomControl extends BaseController
                     $row[] = $i['classroom_name'];
                     $row[] = $i['batch_year'];
                     $row[] = $i['session_remark'];
-                    $row[] = $i['status'];
                     $row[] = $i['total_child'];
                     $row[] = $i['total_teachers'];
                     $row[] = $createDate;

@@ -152,6 +152,41 @@ abstract class BaseController extends Controller
     }
 
     /*
+    * Protected - Helper Methods
+    */
+
+    protected function checkSession()
+    {
+        if( !session()->get('isLoggedIn') ): 
+            return false; 
+        endif;
+        return true;
+    }
+
+    protected function prepareData($pageName, $additionalData = [])
+    {
+        $data = [
+            'session' => session()->get('isLoggedIn') ? true : false,
+            'pageName' => $pageName
+        ];
+        
+        return array_merge($data, $additionalData);
+    }
+
+    protected function renderView($viewName, $data = [])
+    {
+        echo view('template/start');
+        echo view('template/header');
+        echo view($viewName, $data);
+        echo view('template/footer');
+        echo view('template/end', $data);
+    }
+
+    /*
+    * End Protected - Helper Methods
+    */
+
+    /*
     * End Protected - Session
     */
 }
