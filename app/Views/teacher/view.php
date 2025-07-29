@@ -397,7 +397,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 $('.editTeacherForm [type=submit]').prop('disabled', false);
             })
             .fail(function() {
-                Swal.fire("", "<?= lang('Label.something_went_wrong'); ?>", "error").then(() => {
+                Swal.fire("", "<?= lang('Response.something_went_wrong'); ?>", "error").then(() => {
                     $('.editTeacherForm [type=submit]').prop('disabled', false);
                 });
             });
@@ -452,7 +452,7 @@ function editTeacher(teacherId) {
         // Success handled above
     })
     .fail(function() {
-        Swal.fire("", "<?= lang('Label.failed_to_load'); ?>", "error");
+                    Swal.fire("", "<?= lang('Response.failed_to_load'); ?>", "error");
     });
 }
 

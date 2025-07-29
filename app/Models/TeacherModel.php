@@ -38,7 +38,7 @@ class TeacherModel extends Model
         if( $query ):
             $response = [
                 'code' => 1,
-                'message' => 'Teacher status updated successfully'
+                'message' => lang('Response.teacher_updated_successfully')
             ];
         else:
             $response = $this->db->error();
@@ -79,12 +79,12 @@ class TeacherModel extends Model
             if( $this->db->transStatus() === false ):
                 $response = [
                     'code' => 0,
-                    'message' => 'Failed to create teacher'
+                    'message' => lang('Response.error')
                 ];
             else:
                 $response = [
                     'code' => 1,
-                    'message' => lang('Label.teacher_added_successfully'),
+                    'message' => lang('Response.teacher_added_successfully'),
                     'teacher_id' => $teacherId
                 ];
             endif;
@@ -141,7 +141,7 @@ class TeacherModel extends Model
         if( $query !== false ):
             $response = [
                 'code' => 1,
-                'message' => 'Success',
+                'message' => lang('Response.success'),
                 'data' => $query,
                 'pageIndex' => $where['pageindex'],
                 'rowPerPage' => $where['rowperpage'],
@@ -151,7 +151,7 @@ class TeacherModel extends Model
         else:
             $response = [
                 'code' => 0,
-                'message' => 'No data found',
+                'message' => lang('Response.teacher_not_found'),
                 'data' => [],
                 'pageIndex' => $where['pageindex'],
                 'rowPerPage' => $where['rowperpage'],
@@ -183,13 +183,13 @@ class TeacherModel extends Model
         if( $query ):
             $response = [
                 'code' => 1,
-                'message' => 'Success',
+                'message' => lang('Response.success'),
                 'data' => $query
             ];
         else:
             $response = [
                 'code' => 0,
-                'message' => 'Teacher not found'
+                'message' => lang('Response.teacher_not_found')
             ];
         endif;
 
@@ -250,7 +250,7 @@ class TeacherModel extends Model
                         $this->db->transRollback();
                         return [
                             'code' => 0,
-                            'message' => 'Failed to update login account'
+                            'message' => lang('Response.failed_to_update')
                         ];
                     endif;
                 else:
@@ -274,18 +274,18 @@ class TeacherModel extends Model
             if( $this->db->transStatus() === false ):
                 $response = [
                     'code' => 0,
-                    'message' => 'Failed to update teacher'
+                    'message' => lang('Response.failed_to_update')
                 ];
             else:
                 $response = [
                     'code' => 1,
-                    'message' => lang('Label.teacher_updated_successfully')
+                    'message' => lang('Response.teacher_updated_successfully')
                 ];
             endif;
         else:
             $response = [
                 'code' => 0,
-                'message' => 'Failed to update teacher record'
+                'message' => lang('Response.failed_to_update')
             ];
         endif;
 
@@ -340,7 +340,7 @@ class TeacherModel extends Model
 
         $response = [
             'code' => 1,
-            'message' => 'Success',
+            'message' => lang('Response.success'),
             'data' => $query ?: []
         ];
 
@@ -356,7 +356,7 @@ class TeacherModel extends Model
 
         $response = [
             'code' => 1,
-            'message' => 'Success',
+            'message' => lang('Response.success'),
             'data' => $query ?: []
         ];
 
@@ -392,7 +392,7 @@ class TeacherModel extends Model
 
         $response = [
             'code' => 1,
-            'message' => 'Success',
+            'message' => lang('Response.success'),
             'data' => $stats
         ];
 

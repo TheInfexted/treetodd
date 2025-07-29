@@ -31,28 +31,9 @@ return [
     'enabled' => 'Enabled',
     'disabled' => 'Disabled',
     
-    // JavaScript messages
-    'success' => 'Success',
-    'error' => 'Error',
-    'updated' => 'Updated',
-    'failed_to_load' => 'Failed to load teacher details.',
-    'failed_to_change_status' => 'Failed to change teacher status.',
-    'something_went_wrong' => 'Something went wrong. Please try again.',
-    'teacher_status_changed' => 'Teacher status changed to',
-    
     // Time-related
     'years_old' => 'years old',
     'years' => 'years',
     'months' => 'months',
     'at' => 'at',
-    
-    // Response messages
-    'teacher_added_successfully' => 'Teacher added successfully',
-    'teacher_updated_successfully' => 'Teacher updated successfully',
-    'teacher_deleted_successfully' => 'Teacher deleted successfully',
-    'session_expired' => 'Session expired',
-    'teacher_not_found' => 'Teacher not found',
-    'validation_failed' => 'Validation failed',
-    'id_already_exists' => 'ID Number already exists',
-    'username_already_exists' => 'Username already exists',
 ];

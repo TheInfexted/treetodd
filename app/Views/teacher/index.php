@@ -322,7 +322,7 @@ function editTeacherStatus(teacherId, newStatus) {
                 // Silent fail
             }
             
-            Swal.fire("Error!", "Something went wrong", "error");
+            Swal.fire("<?= lang('Response.error'); ?>!", "<?= lang('Response.something_went_wrong'); ?>", "error");
         }
     });
 }
@@ -488,7 +488,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 $('.addTeacherForm [type=submit]').prop('disabled', false);
             })
             .fail(function() {
-                Swal.fire("", "Something went wrong", "error");
+                Swal.fire("", "<?= lang('Response.something_went_wrong'); ?>", "error");
                 $('.addTeacherForm [type=submit]').prop('disabled', false);
             });
         }
