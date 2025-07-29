@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use CodeIgniter\Model;
+use Exception;
 
 class ClassroomModel extends Model
 {
@@ -13,7 +14,7 @@ class ClassroomModel extends Model
 
     protected function initialize()
     {
-        $this->allowedFields[] = ['classroom_id','classroom_name','batch_year','session','total_child','total_teachers','status','created_date','modified_date'];
+        $this->allowedFields[] = ['classroom_id','classroom_name','batch_year','session','session_start','session_end','session_remark','total_child','total_teachers','status','created_date','modified_date'];
     }
 
     /*
@@ -57,6 +58,42 @@ class ClassroomModel extends Model
         }
     }
 
+    public function updateClassroom($where)
+    {
+        try {
+            $params = [
+                'classroom_name' => $where['classRoomName'],
+                'batch_year' => $where['batchYear'],
+                'session' => $where['session'],
+                'session_start' => $where['sessionStart'],
+                'session_end' => $where['sessionEnd'],
+                'session_remark' => $where['sessionRemark'],
+                'total_child' => $where['totalChild'],
+                'total_teachers' => $where['totalTeacher'],
+                'modified_date' => date('Y-m-d H:i:s'),
+            ];
+
+            $builder = $this->db->table($this->table);
+            $query = $builder->ignore(true)
+                ->set($params)
+                ->where('classroom_id', $where['classRoomId'])
+                ->update();
+
+            if( $query ):
+                $response = [
+                    'code' => 1,
+                    'message' => lang('Response.success')
+                ];
+            else:
+                $response = $this->db->error();
+            endif;
+
+            return $response;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
     public function insertNewClassroom($where)
 	{
         try {
@@ -79,6 +116,30 @@ class ClassroomModel extends Model
             return $e->getMessage();
         }
 	}
+
+    public function selectClassroom($where)
+	{
+        try {
+            $builder = $this->db->table($this->table);
+            $query = $builder->select('*')
+                ->where('classroom_id', $where['classRoomId'])
+                ->get()->getRowArray();
+
+            if( $query ):
+                $response = [
+                    'code' => 1,
+                    'message' => lang('Response.success'),
+                    'data' => $query
+                ];
+            else:
+                $response = $this->db->error();
+            endif;
+
+            return $response;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 
     public function selectAllClassroomsWithPagination($where)
 	{

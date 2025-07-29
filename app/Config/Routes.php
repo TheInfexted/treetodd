@@ -39,8 +39,10 @@ $routes->post('teacher/get-stats', 'TeacherController::getTeacherStats', ['filte
 // Classroom
 $routes->resource('ClassroomControl');
 $routes->post('list-classroom', 'ClassroomControl::classroomListWithPagination', ['filter' => 'auth']);
+$routes->post('get-classroom', 'ClassroomControl::getClassroom', ['filter' => 'auth']);
 $routes->post('classroom/add-new', 'ClassroomControl::addNewClassroom', ['filter' => 'auth']);
 $routes->post('classroom/modify-status', 'ClassroomControl::updateClassroomStatus', ['filter' => 'auth']);
+$routes->post('classroom/modify', 'ClassroomControl::updateClassroom', ['filter' => 'auth']);
 // End Classroom
 
 // User

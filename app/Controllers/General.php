@@ -12,12 +12,9 @@ class General extends BaseController
     {
         if (!session()->get('isLoggedIn')): return false; endif;
         
-        // Load the TeacherModel using CodeIgniter's model() helper
-        $teacherModel = model('App\Models\TeacherModel');
-        
         // Get branches and kindergartens from database
-        $branches = $teacherModel->selectBranches();
-        $kindergartens = $teacherModel->selectKindergartens();
+        $branches = $this->TeacherModel->selectBranches();
+        $kindergartens = $this->TeacherModel->selectKindergartens();
 
         $data = [
             'session' => session()->get('isLoggedIn') ? true : false,
@@ -37,8 +34,7 @@ class General extends BaseController
     {
         if (!session()->get('isLoggedIn')): return false; endif;
         
-        $teacherModel = model('App\Models\TeacherModel');
-        $teacher = $teacherModel->selectTeacherDetails(['teacher_id' => $teacherId]);
+        $teacher = $this->TeacherModel->selectTeacherDetails(['teacher_id' => $teacherId]);
         
         if (!$teacher || $teacher['code'] != 1) {
             return redirect()->to('/teachers')->with('error', 'Teacher not found');
@@ -61,10 +57,9 @@ class General extends BaseController
     {
         if (!session()->get('isLoggedIn')): return false; endif;
         
-        $teacherModel = model('App\Models\TeacherModel');
-        $teacher = $teacherModel->selectTeacherDetails(['teacher_id' => $teacherId]);
-        $branches = $teacherModel->selectBranches();
-        $kindergartens = $teacherModel->selectKindergartens();
+        $teacher = $this->TeacherModel->selectTeacherDetails(['teacher_id' => $teacherId]);
+        $branches = $this->TeacherModel->selectBranches();
+        $kindergartens = $this->TeacherModel->selectKindergartens();
         
         if (!$teacher || $teacher['code'] != 1) {
             return redirect()->to('/teachers')->with('error', 'Teacher not found');
@@ -89,9 +84,8 @@ class General extends BaseController
     {
         if (!session()->get('isLoggedIn')): return false; endif;
         
-        $teacherModel = model('App\Models\TeacherModel');
-        $branches = $teacherModel->selectBranches();
-        $kindergartens = $teacherModel->selectKindergartens();
+        $branches = $this->TeacherModel->selectBranches();
+        $kindergartens = $this->TeacherModel->selectKindergartens();
 
         $data = [
             'session' => session()->get('isLoggedIn') ? true : false,

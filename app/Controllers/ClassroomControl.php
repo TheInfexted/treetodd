@@ -10,6 +10,20 @@ class ClassroomControl extends BaseController
     * Protected
     */
 
+    protected function sessionSchedule($sessionId,$startTime,$endTime)
+    {
+        switch( $sessionId ):
+            case 1: $sessionRemark = 'Morning ('.date('H:i A',strtotime($startTime)).'-'.date('H:i A',strtotime($endTime)).')'; break;
+            case 2: $sessionRemark = 'Afternoon ('.date('H:i A',strtotime($startTime)).'-'.date('H:i A',strtotime($endTime)).')'; break;
+            case 3: $sessionRemark = 'Morning & Afternoon ('.date('H:i A',strtotime($startTime)).'-'.date('H:i A',strtotime($endTime)).')'; break;
+
+            default:
+                $sessionRemark = '---';
+        endswitch;
+
+        return $sessionRemark;
+    }
+
     /*
     * End Protected
     */
@@ -39,21 +53,77 @@ class ClassroomControl extends BaseController
         endif;
     }
 
+    public function updateClassroom()
+    {
+        if( !session()->get('isLoggedIn') ): return false; endif;
+
+        $startTime = Time::parse(date('H:i:s', strtotime($this->request->getpost('params')['sessionStartTime'])));
+        $endTime = Time::parse(date('H:i:s', strtotime($this->request->getpost('params')['sessionEndTime'])));
+
+        $sessionDefine = $this->sessionSchedule($this->request->getpost('params')['session'],$startTime,$endTime);
+
+        $verifyLogged = $this->verifyLoggedUser();
+        if( !$verifyLogged['timeout'] ):
+            $payload = [
+                'classRoomId' => (int)$this->request->getpost('params')['classRoomId'],
+                'classRoomName' => $this->request->getpost('params')['classRoomName'],
+                'batchYear' => $this->request->getpost('params')['batchYear'],
+                'session' => (int)$this->request->getpost('params')['session'],
+                'sessionStart' => $startTime,
+                'sessionEnd' => $endTime,
+                'sessionRemark' => $sessionDefine,
+                'totalChild' => (int)$this->request->getpost('params')['totalChild'],
+                'totalTeacher' => (int)$this->request->getpost('params')['totalTeacher'],
+            ];
+            $res = $this->ClassroomModel->updateClassroom($payload);
+            echo json_encode($res);
+        else:
+            echo json_encode([
+                'code' => 69,
+                'message' => lang('Response.sessiontimeout')
+            ]);
+        endif;
+    }
+
     public function addNewClassroom()
     {
         if( !session()->get('isLoggedIn') ): return false; endif;
 
-        $startTime = Time::parse(date('Y-m-d H:i:s', strtotime($this->request->getpost('params')['sessionStartTime'])));
-        $endTime = Time::parse(date('Y-m-d H:i:s', strtotime($this->request->getpost('params')['sessionEndTime'])));
+        $startTime = Time::parse(date('H:i:s', strtotime($this->request->getpost('params')['sessionStartTime'])));
+        $endTime = Time::parse(date('H:i:s', strtotime($this->request->getpost('params')['sessionEndTime'])));
+
+        $sessionDefine = $this->sessionSchedule($this->request->getpost('params')['session'],$startTime,$endTime);
 
         $verifyLogged = $this->verifyLoggedUser();
         if( !$verifyLogged['timeout'] ):
             $payload = [
                 'classroom_name' => $this->request->getpost('params')['classRoomName'],
                 'batch_year' => $this->request->getpost('params')['batchYear'],
-                'session' => $this->request->getpost('params')['session'].' ('.date('H:i A',strtotime($startTime)).'-'.date('H:i A',strtotime($endTime)).')',
+                'session' => (int)$this->request->getpost('params')['session'],
+                'sessionStart' => $startTime,
+                'sessionEnd' => $endTime,
+                'session_remark' => $sessionDefine,
             ];
             $res = $this->ClassroomModel->insertNewClassroom($payload);
+            echo json_encode($res);
+        else:
+            echo json_encode([
+                'code' => 69,
+                'message' => lang('Response.sessiontimeout')
+            ]);
+        endif;
+    }
+    
+    public function getClassroom()
+    {
+        if( !session()->get('isLoggedIn') ): return false; endif;
+
+        $verifyLogged = $this->verifyLoggedUser();
+        if( !$verifyLogged['timeout'] ):
+            $payload = [
+                'classRoomId' => (int)$this->request->getpost('params')['classRoomId'],
+            ];
+            $res = $this->ClassroomModel->selectClassroom($payload);
             echo json_encode($res);
         else:
             echo json_encode([
@@ -110,7 +180,7 @@ class ClassroomControl extends BaseController
                     // $row[] = $i['kdgn_id'];
                     $row[] = $i['classroom_name'];
                     $row[] = $i['batch_year'];
-                    $row[] = $i['session'];
+                    $row[] = $i['session_remark'];
                     $row[] = $i['status'];
                     $row[] = $i['total_child'];
                     $row[] = $i['total_teachers'];
