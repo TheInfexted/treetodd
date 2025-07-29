@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use CodeIgniter\I18n\Time;
+use Exception;
 
 class TeacherController extends BaseController
 {
